@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void")
+@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", acceptedMinecraftVersions = "[1.11.2]")
 @Mod.EventBusSubscriber
 public class ForgivingVoid {
 
@@ -36,7 +36,7 @@ public class ForgivingVoid {
 				if(ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
 					damage = event.getEntityLiving().getHealth() - 1f;
 				}
-				event.getEntity().attackEntityFrom(DamageSource.FALL, damage);
+				event.getEntity().attackEntityFrom(DamageSource.fall, damage);
 				event.setDamageMultiplier(0f);
 				event.setCanceled(true);
 				event.getEntity().getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);

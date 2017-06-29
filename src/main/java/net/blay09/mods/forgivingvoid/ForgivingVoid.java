@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", acceptedMinecraftVersions = "[1.11.2]")
+@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", acceptedMinecraftVersions = "[1.10.2]")
 @Mod.EventBusSubscriber
 public class ForgivingVoid {
 

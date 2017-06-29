@@ -1,0 +1,15 @@
+[
+{
+  "modid": "forgivingvoid",
+  "name": "Forgiving Void",
+  "description": "Makes the void hate you a little less (and vice-versa).",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BlayTheNinth"],
+  "credits": "BlayTheNinth",
+  "logoFile": "",
+  "screenshots": []
+}
+]

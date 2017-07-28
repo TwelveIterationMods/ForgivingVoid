@@ -20,7 +20,7 @@ public class ForgivingVoid {
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if(event.side == Side.SERVER) {
-			if(event.player.posY < 0) {
+			if(event.player.posY < ModConfig.triggerAtY) {
 				event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
 				event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
@@ -46,6 +46,10 @@ public class ForgivingVoid {
 
 	@Config(modid = MOD_ID)
 	public static class ModConfig {
+		@Config.Comment("The y level at which Forgiving Void should forgive the player and send them towards the sky.")
+		@Config.RangeInt(min = -64, max = 0)
+		public static int triggerAtY = -32;
+
 		@Config.Comment("The amount of damage applied to the player when they land.")
 		@Config.RangeInt(min = 0, max = 20)
 		public static int damageOnFall = 19;

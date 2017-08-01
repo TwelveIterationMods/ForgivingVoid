@@ -1,6 +1,5 @@
 package net.blay09.mods.forgivingvoid;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
@@ -20,20 +19,17 @@ public class ForgivingVoid {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		event.player.world.profiler.startSection("ForgivingVoidTick");
-		if(event.side == Side.SERVER/* && event.phase == TickEvent.Phase.START*/) {
+		if(event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
 			if(event.player.posY < ModConfig.triggerAtY) {
 				event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
 				event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
 			}
 		}
-		event.player.world.profiler.endSection();
 	}
 
 	@SubscribeEvent
 	public static void onPlayerFall(LivingFallEvent event) {
-		event.getEntity().world.profiler.startSection("ForgivingVoidFall");
 		if(event.getEntity() instanceof EntityPlayer) {
 			if(event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
 				float damage = ModConfig.damageOnFall;
@@ -46,7 +42,6 @@ public class ForgivingVoid {
 				event.getEntity().getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);
 			}
 		}
-		event.getEntity().world.profiler.endSection();
 	}
 
 	@Config(modid = MOD_ID)

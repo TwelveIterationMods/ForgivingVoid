@@ -38,6 +38,12 @@ public class ForgivingVoid {
 		if(event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
 			if(isEnabledForDimension(event.player.dimension) && event.player.posY < ModConfig.triggerAtY) {
 				event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
+				if(event.player.isBeingRidden()) {
+					event.player.removePassengers();
+				}
+				if(event.player.isRiding()) {
+					event.player.dismountRidingEntity();
+				}
 				event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
 			}

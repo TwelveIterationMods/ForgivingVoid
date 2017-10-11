@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void")
+@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", serverSideOnly = true)
 @Mod.EventBusSubscriber
 public class ForgivingVoid {
 

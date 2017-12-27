@@ -13,6 +13,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply from: 'gradle/scripts/common.gradle'
+apply from: 'gradle/scripts/with-at.gradle'
 
 apply from: 'dependencies.gradle'
 

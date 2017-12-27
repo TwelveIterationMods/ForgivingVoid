@@ -2,6 +2,7 @@ package net.blay09.mods.forgivingvoid;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -19,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", serverSideOnly = true)
+@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class ForgivingVoid {
 
@@ -35,27 +36,33 @@ public class ForgivingVoid {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if(event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-			if(isEnabledForDimension(event.player.dimension) && event.player.posY < ModConfig.triggerAtY) {
+		if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
+			if (isEnabledForDimension(event.player.dimension) && event.player.posY < ModConfig.triggerAtY) {
 				event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
-				if(event.player.isBeingRidden()) {
+				if (event.player.isBeingRidden()) {
 					event.player.removePassengers();
 				}
-				if(event.player.isRiding()) {
+				if (event.player.isRiding()) {
 					event.player.dismountRidingEntity();
 				}
+				((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
 				event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
+			} else if(event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+				// Vanilla's AntiCheat is a dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
+				// So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
+				((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
 			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerFall(LivingFallEvent event) {
-		if(event.getEntity() instanceof EntityPlayer) {
-			if(event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+		if (event.getEntity() instanceof EntityPlayerMP) {
+			if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+				((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
 				float damage = ModConfig.damageOnFall;
-				if(ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
+				if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
 					damage = event.getEntityLiving().getHealth() - 1f;
 				}
 				event.getEntity().attackEntityFrom(DamageSource.FALL, damage);
@@ -68,7 +75,7 @@ public class ForgivingVoid {
 
 	@SubscribeEvent
 	public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-		if(MOD_ID.equals(event.getModID())) {
+		if (MOD_ID.equals(event.getModID())) {
 			ConfigManager.sync(MOD_ID, Config.Type.INSTANCE);
 			updateDimensionBlacklist();
 		}
@@ -76,7 +83,7 @@ public class ForgivingVoid {
 
 	private static void updateDimensionBlacklist() {
 		dimensionBlacklist.clear();
-		for(String dimension : ModConfig.dimensionBlacklist) {
+		for (String dimension : ModConfig.dimensionBlacklist) {
 			try {
 				dimensionBlacklist.add(Integer.parseInt(dimension));
 			} catch (NumberFormatException e) {
@@ -86,11 +93,11 @@ public class ForgivingVoid {
 	}
 
 	private static boolean isEnabledForDimension(int dimension) {
-		if(dimension == 0) {
+		if (dimension == 0) {
 			return ModConfig.triggerInOverworld;
-		} else if(dimension == 1) {
+		} else if (dimension == 1) {
 			return ModConfig.triggerInEnd;
-		} else if(dimension == -1) {
+		} else if (dimension == -1) {
 			return ModConfig.triggerInNether;
 		} else {
 			return ModConfig.dimensionBlacklistIsWhitelist == dimensionBlacklist.contains(dimension);
@@ -124,7 +131,7 @@ public class ForgivingVoid {
 		public static boolean triggerInEnd = true;
 
 		@Config.Comment("List of additional dimension ids to be blacklisted from Forgiving Void. Options triggerInOverworld etc. take priority.")
-		public static String[] dimensionBlacklist = new String[] {};
+		public static String[] dimensionBlacklist = new String[]{};
 
 		@Config.Comment("Set to true if you want the dimensionBlacklist to be treated as a whitelist instead. Options triggerInOverworld etc. still take priority.")
 		public static boolean dimensionBlacklistIsWhitelist = false;

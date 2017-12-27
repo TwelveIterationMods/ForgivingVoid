@@ -48,7 +48,7 @@ public class ForgivingVoid {
 				((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
 				event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
-			} else if(event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+			} else if (ModConfig.disableVanillaAntiCheatWhileFalling && event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
 				// Vanilla's AntiCheat is a dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
 				// So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
 				((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
@@ -60,7 +60,10 @@ public class ForgivingVoid {
 	public static void onPlayerFall(LivingFallEvent event) {
 		if (event.getEntity() instanceof EntityPlayerMP) {
 			if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
-				((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
+				if (ModConfig.disableVanillaAntiCheatWhileFalling) {
+					((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
+				}
+
 				float damage = ModConfig.damageOnFall;
 				if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
 					damage = event.getEntityLiving().getHealth() - 1f;
@@ -135,5 +138,8 @@ public class ForgivingVoid {
 
 		@Config.Comment("Set to true if you want the dimensionBlacklist to be treated as a whitelist instead. Options triggerInOverworld etc. still take priority.")
 		public static boolean dimensionBlacklistIsWhitelist = false;
+
+		@Config.Comment("Set to true if players are rubber-banding while falling through the void. If you're hosting a public server, you should only do this if you have proper anti-cheat installed.")
+		public static boolean disableVanillaAntiCheatWhileFalling = false;
 	}
 }

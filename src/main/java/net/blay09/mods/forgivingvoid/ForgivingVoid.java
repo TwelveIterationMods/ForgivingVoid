@@ -140,6 +140,6 @@ public class ForgivingVoid {
 		public static boolean dimensionBlacklistIsWhitelist = false;
 
 		@Config.Comment("Set to true if players are rubber-banding while falling through the void. If you're hosting a public server, you should only do this if you have proper anti-cheat installed.")
-		public static boolean disableVanillaAntiCheatWhileFalling = false;
+		public static boolean disableVanillaAntiCheatWhileFalling = true;
 	}
 }

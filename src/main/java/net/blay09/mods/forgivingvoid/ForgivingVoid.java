@@ -70,7 +70,10 @@ public class ForgivingVoid {
 					if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
 						damage = event.getEntityLiving().getHealth() - 1f;
 					}
-					event.getEntity().attackEntityFrom(DamageSource.FALL, damage * Math.max(1, event.getDamageMultiplier()));
+					float finalDamage = damage * Math.max(1, event.getDamageMultiplier());
+					if (finalDamage > 0f) {
+						event.getEntity().attackEntityFrom(DamageSource.FALL, finalDamage);
+					}
 				}
 				event.setDamageMultiplier(0f);
 				event.setCanceled(true);

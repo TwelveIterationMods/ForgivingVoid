@@ -57,7 +57,7 @@ public class ForgivingVoid {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
 	public static void onPlayerFall(LivingFallEvent event) {
 		if (event.getEntity() instanceof EntityPlayerMP) {
 			if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
@@ -65,11 +65,13 @@ public class ForgivingVoid {
 					((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
 				}
 
-				float damage = ModConfig.damageOnFall;
-				if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
-					damage = event.getEntityLiving().getHealth() - 1f;
+				if (!event.isCanceled()) {
+					float damage = ModConfig.damageOnFall;
+					if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
+						damage = event.getEntityLiving().getHealth() - 1f;
+					}
+					event.getEntity().attackEntityFrom(DamageSource.FALL, damage * Math.max(1, event.getDamageMultiplier()));
 				}
-				event.getEntity().attackEntityFrom(DamageSource.FALL, damage);
 				event.setDamageMultiplier(0f);
 				event.setCanceled(true);
 				event.getEntity().getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);

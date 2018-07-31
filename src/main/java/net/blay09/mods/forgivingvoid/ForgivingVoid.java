@@ -53,6 +53,8 @@ public class ForgivingVoid {
                 // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
                 if (event.player.isInWater()) {
                     event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);
+                    ((EntityPlayerMP) event.player).invulnerableDimensionChange = false;
+                    return;
                 }
 
                 if (ModConfig.disableVanillaAntiCheatWhileFalling) {

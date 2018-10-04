@@ -1,10 +1,8 @@
 repositories {
     mavenLocal()
     mavenCentral()
-    
-    maven {
-        url "http://blay09.net:8081/artifactory/repo/"
-    }
+
+    maven { url 'https://maven.mcmoddev.com' }
 }
 
 configurations {

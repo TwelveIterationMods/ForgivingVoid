@@ -1,8 +1,8 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class ForgivingVoidEvent extends Event {

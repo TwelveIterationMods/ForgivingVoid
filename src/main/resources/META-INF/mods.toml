@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[24,)"
+issueTrackerURL="https://github.com/blay09/ForgivingVoid/issues"
+displayURL="https://minecraft.curseforge.com/projects/forgiving-void"
+authors="BlayTheNinth"
+
+[[mods]]
+modId="forgivingvoid"
+version="${file.jarVersion}"
+displayName="Forgiving Void"
+description='''
+Makes the void hate you a little less (and vice-versa).
+'''

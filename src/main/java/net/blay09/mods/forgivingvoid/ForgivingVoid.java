@@ -1,62 +1,58 @@
 package net.blay09.mods.forgivingvoid;
 
-import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.List;
-
-@Mod(modid = ForgivingVoid.MOD_ID, name = "Forgiving Void", acceptableRemoteVersions = "*")
+@Mod(ForgivingVoid.MOD_ID)
 @Mod.EventBusSubscriber
 public class ForgivingVoid {
 
     public static final String MOD_ID = "forgivingvoid";
-    private static Logger logger = LogManager.getLogger(MOD_ID);
 
-    private static List<Integer> dimensionBlacklist = Lists.newArrayList();
+    public ForgivingVoid() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        updateDimensionBlacklist();
+        // TODO Awaiting Forge config COMMON fix
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgivingVoidConfig.commonSpec);
     }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        event.buildSoftDependProxy("gamestages", "net.blay09.mods.forgivingvoid.compat.GameStagesCompat");
+    public void setup(FMLCommonSetupEvent event) {
+        ModList.get().getModObjectById("gamestages").ifPresent(it -> {
+            // TODO Awaiting Game Stages port, and see if it actually works like this without crashing when not installed
+//            new GameStagesCompat()
+        });
     }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-            if (isEnabledForDimension(event.player.dimension) && event.player.posY < ModConfig.triggerAtY && fireForgivingVoidEvent(event.player)) {
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
+            if (isEnabledForDimension(event.player.dimension.getId()) && event.player.posY < ForgivingVoidConfig.COMMON.triggerAtY.get() && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
                 }
 
-                if (event.player.isRiding()) {
-                    event.player.dismountRidingEntity();
+                if (event.player.getRidingEntity() != null) {
+                    event.player.stopRiding();
                 }
 
                 ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
-                event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
+                event.player.setPositionAndUpdate(event.player.posX, ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.posZ);
                 event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
@@ -66,7 +62,7 @@ public class ForgivingVoid {
                     return;
                 }
 
-                if (ModConfig.disableVanillaAntiCheatWhileFalling) {
+                if (ForgivingVoidConfig.COMMON.disableVanillaAntiCheatWhileFalling.get()) {
                     // Vanilla's AntiCheat is a dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
                     // So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
                     ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
@@ -79,13 +75,13 @@ public class ForgivingVoid {
     public static void onPlayerFall(LivingFallEvent event) {
         if (event.getEntity() instanceof EntityPlayerMP) {
             if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
-                if (ModConfig.disableVanillaAntiCheatWhileFalling) {
+                if (ForgivingVoidConfig.COMMON.disableVanillaAntiCheatWhileFalling.get()) {
                     ((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
                 }
 
                 if (!event.isCanceled()) {
-                    float damage = ModConfig.damageOnFall;
-                    if (ModConfig.preventDeath && event.getEntityLiving().getHealth() - damage <= 0) {
+                    float damage = ForgivingVoidConfig.COMMON.damageOnFall.get();
+                    if (ForgivingVoidConfig.COMMON.preventDeath.get() && event.getEntityLiving().getHealth() - damage <= 0) {
                         damage = event.getEntityLiving().getHealth() - 1f;
                     }
                     float finalDamage = damage * Math.max(1, event.getDamageMultiplier());
@@ -101,38 +97,19 @@ public class ForgivingVoid {
         }
     }
 
-    @SubscribeEvent
-    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (MOD_ID.equals(event.getModID())) {
-            ConfigManager.sync(MOD_ID, Config.Type.INSTANCE);
-            updateDimensionBlacklist();
-        }
-    }
-
-    private static void updateDimensionBlacklist() {
-        dimensionBlacklist.clear();
-        for (String dimension : ModConfig.dimensionBlacklist) {
-            try {
-                dimensionBlacklist.add(Integer.parseInt(dimension));
-            } catch (NumberFormatException e) {
-                logger.error("Invalid dimension blacklist entry {}, expected numeric id", dimension);
-            }
-        }
-    }
-
     private static boolean fireForgivingVoidEvent(EntityPlayer player) {
         return !MinecraftForge.EVENT_BUS.post(new ForgivingVoidEvent(player));
     }
 
     private static boolean isEnabledForDimension(int dimension) {
         if (dimension == 0) {
-            return ModConfig.triggerInOverworld;
+            return ForgivingVoidConfig.COMMON.triggerInOverworld.get();
         } else if (dimension == 1) {
-            return ModConfig.triggerInEnd;
+            return ForgivingVoidConfig.COMMON.triggerInEnd.get();
         } else if (dimension == -1) {
-            return ModConfig.triggerInNether;
+            return ForgivingVoidConfig.COMMON.triggerInNether.get();
         } else {
-            return ModConfig.dimensionBlacklistIsWhitelist == dimensionBlacklist.contains(dimension);
+            return ForgivingVoidConfig.COMMON.dimensionBlacklistIsWhitelist.get() == ForgivingVoidConfig.COMMON.dimensionBlacklist.get().contains(dimension);
         }
     }
 

@@ -1,5 +1,6 @@
 package net.blay09.mods.forgivingvoid;
 
+import net.blay09.mods.forgivingvoid.compat.GameStagesCompat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -27,15 +28,11 @@ public class ForgivingVoid {
     public ForgivingVoid() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
-        // TODO Awaiting Forge config COMMON fix
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgivingVoidConfig.commonSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgivingVoidConfig.commonSpec);
     }
 
     public void setup(FMLCommonSetupEvent event) {
-        ModList.get().getModObjectById("gamestages").ifPresent(it -> {
-            // TODO Awaiting Game Stages port, and see if it actually works like this without crashing when not installed
-//            new GameStagesCompat()
-        });
+        ModList.get().getModObjectById("gamestages").ifPresent(it -> new GameStagesCompat());
     }
 
     @SubscribeEvent

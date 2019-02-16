@@ -2,15 +2,15 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
-		mavenCentral()
+        mavenCentral()
     }
-	// This is only here while FG is under active development
-	configurations.classpath {
-		resolutionStrategy {
-			cacheDynamicVersionsFor 10, "seconds"
-			cacheChangingModulesFor 0, "seconds"
-		}
-	}
+    // This is only here while FG is under active development
+    configurations.classpath {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 10, "seconds"
+            cacheChangingModulesFor 0, "seconds"
+        }
+    }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
     }
@@ -30,43 +30,53 @@ group = "net.blay09.mods"
 archivesBaseName = mod_name + "_" + minecraft_version
 
 minecraft {
-	mappings channel: mappings_channel, version: mappings_version
+    mappings channel: mappings_channel, version: mappings_version
 
-	accessTransformer = file('src/main/resources/META-INF/forgivingvoid_at.cfg')
+    accessTransformer = file('src/main/resources/META-INF/forgivingvoid_at.cfg')
 
-	runs {
-		client = {
-			properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-			properties 'forge.logging.console.level': 'debug'
-			workingDirectory project.file('run').canonicalPath
-			source sourceSets.main
-		}
-		server = {
-			properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-			properties 'forge.logging.console.level': 'debug'
-			workingDirectory project.file('run').canonicalPath
-			source sourceSets.main
-		}
-	}
+    runs {
+        client = {
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
+        server = {
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
+    }
+}
+
+repositories {
+    maven {
+        url "https://minecraft.curseforge.com/api/maven/"
+    }
 }
 
 dependencies {
-	minecraft([
-		group  : "${forge_group}",
-		name   : "forge",
-		version: "${minecraft_version}-${forge_version}"
-	])
+    minecraft([
+            group  : "${forge_group}",
+            name   : "forge",
+            version: "${minecraft_version}-${forge_version}"
+    ])
+
+    compileOnly("game-stages:GameStages:1.12.2:2.0.114") {
+        transitive = false
+    }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
-        attributes(["Specification-Title": mod_id,
-                    "Specification-Vendor": "BlayTheNinth",
-                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
-                    "Implementation-Title": project.name,
-                    "Implementation-Version": "${version}",
-                    "Implementation-Vendor" :"BlayTheNinth",
+        attributes(["Specification-Title"     : mod_id,
+                    "Specification-Vendor"    : "BlayTheNinth",
+                    "Specification-Version"   : "24.0", // We are version 1 of the modlauncher specification
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "BlayTheNinth",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
 }

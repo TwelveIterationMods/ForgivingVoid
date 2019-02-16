@@ -3,6 +3,7 @@ package net.blay09.mods.forgivingvoid.compat;
 import com.google.common.base.Strings;
 import net.blay09.mods.forgivingvoid.ForgivingVoidEvent;
 import net.blay09.mods.forgivingvoid.ForgivingVoidConfig;
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,8 +22,8 @@ public class GameStagesCompat {
         }
 
         EntityPlayer player = event.getPlayer();
-//        if (!GameStageHelper.hasStage(player, requiredStage)) { TODO Awaiting GameStages port
-//            event.setCanceled(true);
-//        }
+        if (!GameStageHelper.hasStage(player, requiredStage)) {
+            event.setCanceled(true);
+        }
     }
 }

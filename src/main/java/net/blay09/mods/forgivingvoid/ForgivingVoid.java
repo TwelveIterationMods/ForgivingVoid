@@ -45,18 +45,16 @@ public class ForgivingVoid {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-            if (isEnabledForDimension(event.player.dimension) && event.player.posY < ModConfig.triggerAtY && fireForgivingVoidEvent(event.player)) {
+            boolean isInVoid = event.player.posY < ModConfig.triggerAtY && event.player.prevPosY < ModConfig.triggerAtY;
+            boolean isTeleporting = ((EntityPlayerMP) event.player).connection.targetPos != null;
+            if (isEnabledForDimension(event.player.dimension) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
                 }
 
-                if (event.player.isRiding()) {
-                    event.player.dismountRidingEntity();
-                }
-
-                ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
-                event.player.setPositionAndUpdate(event.player.posX, ModConfig.fallingHeight, event.player.posZ);
+                event.player.dismountRidingEntity();
+                ((EntityPlayerMP) event.player).connection.setPlayerLocation(event.player.posX, (double) ModConfig.fallingHeight, event.player.posZ, event.player.rotationYaw, event.player.rotationPitch);
                 event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
@@ -67,7 +65,7 @@ public class ForgivingVoid {
                 }
 
                 if (ModConfig.disableVanillaAntiCheatWhileFalling) {
-                    // Vanilla's AntiCheat is a dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
+                    // Vanilla's AntiCheat is dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
                     // So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
                     ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
                 }

@@ -1,10 +1,10 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.forgivingvoid.compat.GameStagesCompat;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -38,31 +38,31 @@ public class ForgivingVoid {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
-            if (isEnabledForDimension(event.player.dimension.getId()) && event.player.posY < ForgivingVoidConfig.COMMON.triggerAtY.get() && fireForgivingVoidEvent(event.player)) {
-                event.player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 60, 3));
+            boolean isInVoid = event.player.posY < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
+             boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
+            if (isEnabledForDimension(event.player.dimension.getId()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
+                event.player.addPotionEffect(new EffectInstance(Effects.field_76440_q, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
                 }
 
-                if (event.player.getRidingEntity() != null) {
-                    event.player.stopRiding();
-                }
+                event.player.stopRiding();
 
-                ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
+                ((ServerPlayerEntity) event.player).invulnerableDimensionChange = true;
                 event.player.setPositionAndUpdate(event.player.posX, ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.posZ);
-                event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
+                event.player.getEntityData().putBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
                 if (event.player.isInWater()) {
-                    event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);
-                    ((EntityPlayerMP) event.player).invulnerableDimensionChange = false;
+                    event.player.getEntityData().putBoolean("ForgivingVoidNoFallDamage", false);
+                    ((ServerPlayerEntity) event.player).invulnerableDimensionChange = false;
                     return;
                 }
 
                 if (ForgivingVoidConfig.COMMON.disableVanillaAntiCheatWhileFalling.get()) {
-                    // Vanilla's AntiCheat is a dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
+                    // Vanilla's AntiCheat is dumb, absolutely terrible. Triggers on falling and teleports, even in Vanilla.
                     // So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
-                    ((EntityPlayerMP) event.player).invulnerableDimensionChange = true;
+                    ((ServerPlayerEntity) event.player).invulnerableDimensionChange = true;
                 }
             }
         }
@@ -70,10 +70,10 @@ public class ForgivingVoid {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void onPlayerFall(LivingFallEvent event) {
-        if (event.getEntity() instanceof EntityPlayerMP) {
+        if (event.getEntity() instanceof ServerPlayerEntity) {
             if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
                 if (ForgivingVoidConfig.COMMON.disableVanillaAntiCheatWhileFalling.get()) {
-                    ((EntityPlayerMP) event.getEntity()).invulnerableDimensionChange = false;
+                    ((ServerPlayerEntity) event.getEntity()).invulnerableDimensionChange = false;
                 }
 
                 if (!event.isCanceled()) {
@@ -89,12 +89,12 @@ public class ForgivingVoid {
 
                 event.setDamageMultiplier(0f);
                 event.setCanceled(true);
-                event.getEntity().getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);
+                event.getEntity().getEntityData().putBoolean("ForgivingVoidNoFallDamage", false);
             }
         }
     }
 
-    private static boolean fireForgivingVoidEvent(EntityPlayer player) {
+    private static boolean fireForgivingVoidEvent(PlayerEntity player) {
         return !MinecraftForge.EVENT_BUS.post(new ForgivingVoidEvent(player));
     }
 

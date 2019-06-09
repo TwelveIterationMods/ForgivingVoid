@@ -1,6 +1,8 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.forgivingvoid.compat.GameStagesCompat;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -81,7 +83,7 @@ public class ForgivingVoid {
                     if (ForgivingVoidConfig.COMMON.preventDeath.get() && event.getEntityLiving().getHealth() - damage <= 0) {
                         damage = event.getEntityLiving().getHealth() - 1f;
                     }
-                    float finalDamage = damage * Math.max(1, event.getDamageMultiplier());
+                    float finalDamage = damage * event.getDamageMultiplier();
                     if (finalDamage > 0f) {
                         event.getEntity().attackEntityFrom(DamageSource.FALL, finalDamage);
                     }

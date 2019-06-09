@@ -33,7 +33,7 @@ public class ForgivingVoidConfig {
             damageOnFall = builder
                     .comment("The amount of damage applied to the player when they land.")
                     .translation("forgivingvoid.config.damageOnFall")
-                    .defineInRange("damageOnFall", 19, 0, 20);
+                    .defineInRange("damageOnFall", 19, 0, Integer.MAX_VALUE);
 
             fallingHeight = builder
                     .comment("The height from which the player will be falling after falling through the void.")

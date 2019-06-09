@@ -9,7 +9,7 @@ public class ModConfig {
     public static int triggerAtY = -32;
 
     @Config.Comment("The amount of damage applied to the player when they land.")
-    @Config.RangeInt(min = 0, max = 20)
+    @Config.RangeInt(min = 0)
     public static int damageOnFall = 19;
 
     @Config.Comment("Prevent death on void fall (limits damage to leave at least 0.5 hearts)")

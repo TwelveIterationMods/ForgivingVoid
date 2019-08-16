@@ -1,14 +1,13 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.forgivingvoid.compat.GameStagesCompat;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -43,7 +41,7 @@ public class ForgivingVoid {
             boolean isInVoid = event.player.posY < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
              boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
             if (isEnabledForDimension(event.player.dimension.getId()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
-                event.player.addPotionEffect(new EffectInstance(Effects.field_76440_q, 60, 3));
+                event.player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
                 }

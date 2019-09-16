@@ -50,11 +50,11 @@ public class ForgivingVoid {
 
                 ((ServerPlayerEntity) event.player).invulnerableDimensionChange = true;
                 event.player.setPositionAndUpdate(event.player.posX, ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.posZ);
-                event.player.getEntityData().putBoolean("ForgivingVoidNoFallDamage", true);
-            } else if (event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+                event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", true);
+            } else if (event.player.getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
                 if (event.player.isInWater()) {
-                    event.player.getEntityData().putBoolean("ForgivingVoidNoFallDamage", false);
+                    event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", false);
                     ((ServerPlayerEntity) event.player).invulnerableDimensionChange = false;
                     return;
                 }
@@ -71,7 +71,7 @@ public class ForgivingVoid {
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void onPlayerFall(LivingFallEvent event) {
         if (event.getEntity() instanceof ServerPlayerEntity) {
-            if (event.getEntity().getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
+            if (event.getEntity().getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
                 if (ForgivingVoidConfig.COMMON.disableVanillaAntiCheatWhileFalling.get()) {
                     ((ServerPlayerEntity) event.getEntity()).invulnerableDimensionChange = false;
                 }
@@ -89,7 +89,7 @@ public class ForgivingVoid {
 
                 event.setDamageMultiplier(0f);
                 event.setCanceled(true);
-                event.getEntity().getEntityData().putBoolean("ForgivingVoidNoFallDamage", false);
+                event.getEntity().getPersistentData().putBoolean("ForgivingVoidNoFallDamage", false);
             }
         }
     }

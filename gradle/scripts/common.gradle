@@ -2,7 +2,9 @@ repositories {
     mavenLocal()
     mavenCentral()
 
-    maven { url 'https://maven.mcmoddev.com' }
+    maven {
+        url "https://minecraft.curseforge.com/api/maven/"
+    }
 }
 
 configurations {

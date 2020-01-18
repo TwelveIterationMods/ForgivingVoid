@@ -1,5 +1,3 @@
 dependencies {
-    compile("net.darkhax.gamestages:GameStages-1.12.2:2.0.106") {
-        transitive = false
-    }
+    provided("game-stages:GameStages:1.12.2:2.0.115")
 }

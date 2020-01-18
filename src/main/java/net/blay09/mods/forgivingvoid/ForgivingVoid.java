@@ -50,7 +50,7 @@ public class ForgivingVoid {
 				event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", true);
 			} else if (event.player.getEntityData().getBoolean("ForgivingVoidNoFallDamage")) {
 				// LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
-				if (event.player.isInWater() || event.player.isInWeb || event.player.capabilities.isFlying) {
+				if (event.player.isInWater() || event.player.isInWeb || event.player.capabilities.isFlying || event.player.capabilities.allowFlying) {
 					event.player.getEntityData().setBoolean("ForgivingVoidNoFallDamage", false);
 					((EntityPlayerMP) event.player).invulnerableDimensionChange = false;
 					return;

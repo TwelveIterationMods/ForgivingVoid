@@ -54,7 +54,7 @@ public class ForgivingVoid {
                 event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
-                if (event.player.isInWater() || event.player.abilities.isFlying || event.player.world.getBlockState(event.player.getPosition()).getBlock() == Blocks.COBWEB) {
+                if (event.player.isInWater() || event.player.abilities.isFlying || event.player.abilities.allowFlying || event.player.world.getBlockState(event.player.getPosition()).getBlock() == Blocks.COBWEB) {
                     event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", false);
                     ((ServerPlayerEntity) event.player).invulnerableDimensionChange = false;
                     return;

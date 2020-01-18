@@ -1,6 +1,7 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.forgivingvoid.compat.GameStagesCompat;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -39,7 +40,7 @@ public class ForgivingVoid {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
             boolean isInVoid = event.player.posY < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
-             boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
+            boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
             if (isEnabledForDimension(event.player.dimension.getId()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
@@ -52,8 +53,8 @@ public class ForgivingVoid {
                 event.player.setPositionAndUpdate(event.player.posX, ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.posZ);
                 event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
-                // LivingFallEvent is not called when the player falls into water, so reset it manually - water means no damage at all.
-                if (event.player.isInWater()) {
+                // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
+                if (event.player.isInWater() || event.player.abilities.isFlying || event.player.world.getBlockState(event.player.getPosition()).getBlock() == Blocks.COBWEB) {
                     event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", false);
                     ((ServerPlayerEntity) event.player).invulnerableDimensionChange = false;
                     return;

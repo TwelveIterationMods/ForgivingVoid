@@ -39,7 +39,7 @@ public class ForgivingVoid {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
-            boolean isInVoid = event.player.func_226278_cu_() < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
+            boolean isInVoid = event.player.getPosY() < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
             boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
             if (isEnabledForDimension(event.player.dimension.getId()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 60, 3));
@@ -50,7 +50,7 @@ public class ForgivingVoid {
                 event.player.stopRiding();
 
                 ((ServerPlayerEntity) event.player).invulnerableDimensionChange = true;
-                event.player.setPositionAndUpdate(event.player.func_226277_ct_(), ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.func_226281_cx_());
+                event.player.setPositionAndUpdate(event.player.getPosX(), ForgivingVoidConfig.COMMON.fallingHeight.get(), event.player.getPosZ());
                 event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.

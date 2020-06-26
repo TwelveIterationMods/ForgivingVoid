@@ -7,6 +7,10 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -41,7 +45,7 @@ public class ForgivingVoid {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
             boolean isInVoid = event.player.getPosY() < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
             boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
-            if (isEnabledForDimension(event.player.dimension.getId()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
+            if (isEnabledForDimension(event.player.world.func_234923_W_()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
@@ -54,7 +58,8 @@ public class ForgivingVoid {
                 event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", true);
             } else if (event.player.getPersistentData().getBoolean("ForgivingVoidNoFallDamage")) {
                 // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
-                if (event.player.isInWater() || event.player.abilities.isFlying || event.player.abilities.allowFlying || event.player.world.getBlockState(event.player.getPosition()).getBlock() == Blocks.COBWEB) {
+                final BlockPos playerPos = event.player.func_233580_cy_();
+                if (event.player.isInWater() || event.player.abilities.isFlying || event.player.abilities.allowFlying || event.player.world.getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
                     event.player.getPersistentData().putBoolean("ForgivingVoidNoFallDamage", false);
                     ((ServerPlayerEntity) event.player).invulnerableDimensionChange = false;
                     return;
@@ -99,15 +104,16 @@ public class ForgivingVoid {
         return !MinecraftForge.EVENT_BUS.post(new ForgivingVoidEvent(player));
     }
 
-    private static boolean isEnabledForDimension(int dimension) {
-        if (dimension == 0) {
+    private static boolean isEnabledForDimension(RegistryKey<World> dimension) {
+        if (dimension == World.field_234918_g_) {
             return ForgivingVoidConfig.COMMON.triggerInOverworld.get();
-        } else if (dimension == 1) {
+        } else if (dimension == World.field_234920_i_) {
             return ForgivingVoidConfig.COMMON.triggerInEnd.get();
-        } else if (dimension == -1) {
+        } else if (dimension == World.field_234919_h_) {
             return ForgivingVoidConfig.COMMON.triggerInNether.get();
         } else {
-            return ForgivingVoidConfig.COMMON.dimensionBlacklistIsWhitelist.get() == ForgivingVoidConfig.COMMON.dimensionBlacklist.get().contains(dimension);
+            final ResourceLocation resourceLocation = dimension.func_240901_a_(); // getResourceLocation()
+            return ForgivingVoidConfig.COMMON.dimensionBlacklistIsWhitelist.get() == ForgivingVoidConfig.COMMON.dimensionBlacklist.get().contains(resourceLocation.toString());
         }
     }
 

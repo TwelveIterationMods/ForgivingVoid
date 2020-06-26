@@ -19,7 +19,7 @@ public class ForgivingVoidConfig {
         public final ForgeConfigSpec.BooleanValue triggerInEnd;
         public final ForgeConfigSpec.BooleanValue dimensionBlacklistIsWhitelist;
         public final ForgeConfigSpec.BooleanValue disableVanillaAntiCheatWhileFalling;
-        public final ForgeConfigSpec.ConfigValue<List<Integer>> dimensionBlacklist;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> dimensionBlacklist;
         public final ForgeConfigSpec.ConfigValue<String> requiredGameStage;
 
         Common(ForgeConfigSpec.Builder builder) {
@@ -73,7 +73,7 @@ public class ForgivingVoidConfig {
             dimensionBlacklist = builder
                     .comment("List of additional dimension ids to be blacklisted from Forgiving Void. Options triggerInOverworld etc. take priority.")
                     .translation("forgivingvoid.config.dimensionBlacklist")
-                    .define("dimensionBlacklist", Lists.newArrayList());
+                    .defineList("dimensionBlacklist", Lists.newArrayList(), it -> it instanceof String);
 
             requiredGameStage = builder
                     .comment("For integration with the Game Stages mod, set this to the game stage that needs to be unlocked in order for Forgiving Void to be enabled.")
@@ -85,6 +85,7 @@ public class ForgivingVoidConfig {
 
     static final ForgeConfigSpec commonSpec;
     public static final Common COMMON;
+
     static {
         final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         commonSpec = specPair.getRight();

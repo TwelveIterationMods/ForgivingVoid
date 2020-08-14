@@ -3,6 +3,7 @@ loaderVersion="[24,)"
 issueTrackerURL="https://github.com/blay09/ForgivingVoid/issues"
 displayURL="https://minecraft.curseforge.com/projects/forgiving-void"
 authors="BlayTheNinth"
+license="MIT"
 
 [[mods]]
 modId="forgivingvoid"

@@ -45,7 +45,7 @@ public class ForgivingVoid {
         if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
             boolean isInVoid = event.player.getPosY() < ForgivingVoidConfig.COMMON.triggerAtY.get() && event.player.prevPosY < ForgivingVoidConfig.COMMON.triggerAtY.get();
             boolean isTeleporting = ((ServerPlayerEntity) event.player).connection.targetPos != null;
-            if (isEnabledForDimension(event.player.world.func_234923_W_()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
+            if (isEnabledForDimension(event.player.world.getDimensionKey()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(event.player)) {
                 event.player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 60, 3));
                 if (event.player.isBeingRidden()) {
                     event.player.removePassengers();
@@ -105,14 +105,14 @@ public class ForgivingVoid {
     }
 
     private static boolean isEnabledForDimension(RegistryKey<World> dimension) {
-        if (dimension == World.field_234918_g_) {
+        if (dimension == World.OVERWORLD) {
             return ForgivingVoidConfig.COMMON.triggerInOverworld.get();
-        } else if (dimension == World.field_234920_i_) {
+        } else if (dimension == World.THE_END) {
             return ForgivingVoidConfig.COMMON.triggerInEnd.get();
-        } else if (dimension == World.field_234919_h_) {
+        } else if (dimension == World.THE_NETHER) {
             return ForgivingVoidConfig.COMMON.triggerInNether.get();
         } else {
-            final ResourceLocation resourceLocation = dimension.func_240901_a_(); // getResourceLocation()
+            final ResourceLocation resourceLocation = dimension.getLocation();
             return ForgivingVoidConfig.COMMON.dimensionBlacklistIsWhitelist.get() == ForgivingVoidConfig.COMMON.dimensionBlacklist.get().contains(resourceLocation.toString());
         }
     }

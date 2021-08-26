@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "forgivingvoid",
+  "version": "${version}",
+
+  "name": "ForgivingVoid",
+  "description": "Makes the void hate you a little less (and vice-versa). Fall down and come back out on top.",
+  "authors": [
+    "BlayTheNinth"
+  ],
+  "contact": {
+    "homepage": "https://blay09.net/",
+    "sources": "https://github.com/ModdingForBlockheads/ForgivingVoid",
+    "issues": "https://github.com/ModdingForBlockheads/ForgivingVoid/issues"
+  },
+
+  "license": "All Rights Reserved",
+  "icon": "assets/forgivingvoid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.blay09.mods.forgivingvoid.FabricForgivingVoid"
+    ],
+    "client": [
+    ],
+    "modmenu": [
+      "net.blay09.mods.forgivingvoid.compat.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "forgivingvoid.mixins.json"
+  ],
+  "depends": {
+    "cloth-config2": ">=5.0.34",
+    "balm-fabric": ">=1.4.0",
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/scGAfXC"
+      }
+    }
+  }
+}

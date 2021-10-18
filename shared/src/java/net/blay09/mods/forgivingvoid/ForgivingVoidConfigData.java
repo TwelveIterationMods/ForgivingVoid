@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Config(name = ForgivingVoid.MOD_ID)
@@ -33,9 +34,10 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @Comment("Set to true if players are rubber-banding while falling through the void. If you're hosting a public server, you should only do this if you have proper anti-cheat installed.")
     public boolean disableVanillaAntiCheatWhileFalling = true;
 
-    @Comment("List of additional dimension ids to be blacklisted from Forgiving Void. Options triggerInOverworld etc. take priority.")
-    public List<String> dimensionAllowList;
+    @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
+    public List<String> dimensionAllowList = new ArrayList<>();
 
-    public List<String> dimensionDenyList;
+    @Comment("List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set.")
+    public List<String> dimensionDenyList = new ArrayList<>();
 
 }

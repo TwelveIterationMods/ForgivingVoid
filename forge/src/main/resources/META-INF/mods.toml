@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[37,)"
+license="All rights reserved"
+issueTrackerURL="https://github.com/ModdingForBlockheads/ForgivingVoid/issues"
+[[mods]]
+modId="forgivingvoid"
+version="${file.jarVersion}"
+displayName="Forgiving Void"
+displayURL="https://blay09.net/mods/forgivingvoid"
+logoFile="forgivingvoid-icon.png"
+credits="BlayTheNinth"
+authors="BlayTheNinth"
+description='''
+
+'''
+[[dependencies.forgivingvoid]]
+    modId="forge"
+    mandatory=true
+    versionRange="[37,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.forgivingvoid]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.17.1,1.18)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.forgivingvoid]]
+    modId="balm"
+    mandatory=true
+    versionRange="[1.6.0,)"
+    ordering="NONE"
+    side="BOTH"

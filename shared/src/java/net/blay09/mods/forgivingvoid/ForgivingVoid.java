@@ -1,6 +1,7 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.event.LivingDamageEvent;
 import net.blay09.mods.balm.api.event.LivingFallEvent;
 import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
@@ -29,7 +30,10 @@ public class ForgivingVoid {
         ForgivingVoidConfig.initialize();
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onPlayerFall);
+        Balm.getEvents().onEvent(LivingDamageEvent.class, ForgivingVoid::onPlayerDamage);
         Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
+
+        Balm.initialize(MOD_ID);
     }
 
     public static void onPlayerTick(ServerPlayer player) {
@@ -46,12 +50,13 @@ public class ForgivingVoid {
 
             ((ServerPlayerAccessor) player).setIsChangingDimension(true);
             player.teleportTo(player.getX(), ForgivingVoidConfig.getActive().fallingHeight, player.getZ());
-            persistentData.putBoolean("ForgivingVoidNoFallDamage", true);
-        } else if (persistentData.getBoolean("ForgivingVoidNoFallDamage")) {
+            persistentData.putBoolean("ForgivingVoidIsFalling", true);
+        } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             final BlockPos playerPos = player.blockPosition();
-            if (player.isInWater() || player.getAbilities().flying || player.getAbilities().mayfly || player.level.getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
-                persistentData.putBoolean("ForgivingVoidNoFallDamage", false);
+            if (player.isInWater() || player.isOnGround() || player.getAbilities().flying || player.getAbilities().mayfly || player.level.getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
+
+                persistentData.putBoolean("ForgivingVoidIsFalling", false);
                 ((ServerPlayerAccessor) player).setIsChangingDimension(false);
                 return;
             }
@@ -68,25 +73,29 @@ public class ForgivingVoid {
         LivingEntity entity = event.getEntity();
         if (entity instanceof ServerPlayer player) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
-            if (persistentData.getBoolean("ForgivingVoidNoFallDamage")) {
-                if (ForgivingVoidConfig.getActive().disableVanillaAntiCheatWhileFalling) {
-                    ((ServerPlayerAccessor) player).setIsChangingDimension(false);
+            if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
+                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
+            }
+        }
+    }
+
+    public static void onPlayerDamage(LivingDamageEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (entity instanceof ServerPlayer player && event.getDamageSource().isFall()) {
+            CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
+            if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
+                persistentData.putBoolean("ForgivingVoidIsFalling", false);
+                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
+
+                float damage = ForgivingVoidConfig.getActive().damageOnFall;
+                if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
+                    damage = player.getHealth() - 1f;
+                }
+                if (damage > 0f) {
+                    entity.hurt(DamageSource.FALL, damage);
                 }
 
-                if (!event.isCanceled()) {
-                    float damage = ForgivingVoidConfig.getActive().damageOnFall;
-                    if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
-                        damage = player.getHealth() - 1f;
-                    }
-                    float finalDamage = damage * event.getDamageMultiplier();
-                    if (finalDamage > 0f) {
-                        entity.hurt(DamageSource.FALL, finalDamage);
-                    }
-                }
-
-                event.setDamageMultiplier(0f);
                 event.setCanceled(true);
-                persistentData.putBoolean("ForgivingVoidNoFallDamage", false);
             }
         }
     }

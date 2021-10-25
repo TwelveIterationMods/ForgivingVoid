@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[37,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/ModdingForBlockheads/ForgivingVoid/issues"
+
 [[mods]]
 modId="forgivingvoid"
 version="${file.jarVersion}"
@@ -11,8 +12,9 @@ logoFile="forgivingvoid-icon.png"
 credits="BlayTheNinth"
 authors="BlayTheNinth"
 description='''
-
+Makes the void hate you a little less (and vice-versa). Fall down and come back out on top.
 '''
+
 [[dependencies.forgivingvoid]]
     modId="forge"
     mandatory=true
@@ -28,6 +30,6 @@ description='''
 [[dependencies.forgivingvoid]]
     modId="balm"
     mandatory=true
-    versionRange="[1.6.0,)"
+    versionRange="[1.7.0,)"
     ordering="NONE"
     side="BOTH"

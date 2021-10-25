@@ -14,7 +14,7 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     public int triggerAtY = -32;
 
     @Comment("The amount of damage applied to the player when they land.")
-    public int damageOnFall;
+    public int damageOnFall = 19;
 
     @Comment("The height from which the player will be falling after falling through the void.")
     public int fallingHeight = 300;

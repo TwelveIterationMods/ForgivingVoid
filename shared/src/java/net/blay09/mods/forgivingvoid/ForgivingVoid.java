@@ -30,7 +30,6 @@ public class ForgivingVoid {
         ForgivingVoidConfig.initialize();
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onPlayerFall);
-        Balm.getEvents().onEvent(LivingDamageEvent.class, ForgivingVoid::onPlayerDamage);
         Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
 
         Balm.initialize(MOD_ID);
@@ -74,28 +73,14 @@ public class ForgivingVoid {
         if (entity instanceof ServerPlayer player) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
             if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
-                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
-            }
-        }
-    }
-
-    public static void onPlayerDamage(LivingDamageEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (entity instanceof ServerPlayer player && event.getDamageSource().isFall()) {
-            CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
-            if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
-                persistentData.putBoolean("ForgivingVoidIsFalling", false);
-                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
-
                 float damage = ForgivingVoidConfig.getActive().damageOnFall;
                 if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
                     damage = player.getHealth() - 1f;
                 }
-                if (damage > 0f) {
-                    entity.hurt(DamageSource.FALL, damage);
-                }
 
-                event.setCanceled(true);
+                event.setFallDamageOverride(damage);
+
+                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
             }
         }
     }

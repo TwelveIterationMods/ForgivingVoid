@@ -30,6 +30,6 @@ Makes the void hate you a little less (and vice-versa). Fall down and come back 
 [[dependencies.forgivingvoid]]
     modId="balm"
     mandatory=true
-    versionRange="[1.7.0,)"
+    versionRange="[1.8.0,)"
     ordering="NONE"
     side="BOTH"

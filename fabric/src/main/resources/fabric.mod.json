@@ -9,13 +9,13 @@
     "BlayTheNinth"
   ],
   "contact": {
-    "homepage": "https://blay09.net/",
+    "homepage": "https://blay09.net/mods/forgivingvoid",
     "sources": "https://github.com/ModdingForBlockheads/ForgivingVoid",
     "issues": "https://github.com/ModdingForBlockheads/ForgivingVoid/issues"
   },
 
   "license": "All Rights Reserved",
-  "icon": "assets/forgivingvoid/icon.png",
+  "icon": "forgivingvoid-icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -33,7 +33,7 @@
   ],
   "depends": {
     "cloth-config2": ">=5.0.34",
-    "balm-fabric": ">=1.4.0",
+    "balm-fabric": ">=1.8.0",
     "fabricloader": ">=0.11.3",
     "fabric": "*",
     "minecraft": "1.17.x",

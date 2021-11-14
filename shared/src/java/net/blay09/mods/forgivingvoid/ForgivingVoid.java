@@ -1,7 +1,6 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.LivingDamageEvent;
 import net.blay09.mods.balm.api.event.LivingFallEvent;
 import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
@@ -12,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,8 +29,6 @@ public class ForgivingVoid {
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onPlayerFall);
         Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
-
-        Balm.initialize(MOD_ID);
     }
 
     public static void onPlayerTick(ServerPlayer player) {

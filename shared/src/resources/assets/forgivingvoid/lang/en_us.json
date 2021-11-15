@@ -1,0 +1,13 @@
+{
+  "text.autoconfig.forgivingvoid.title": "Forgiving Void",
+  "text.autoconfig.forgivingvoid.option.triggerAtY": "Trigger at Y",
+  "text.autoconfig.forgivingvoid.option.damageOnFall": "Damage on Fall",
+  "text.autoconfig.forgivingvoid.option.fallingHeight": "Falling Height",
+  "text.autoconfig.forgivingvoid.option.preventDeath": "Prevent Death",
+  "text.autoconfig.forgivingvoid.option.triggerInOverworld": "Trigger in Overworld",
+  "text.autoconfig.forgivingvoid.option.triggerInNether": "Trigger in Nether",
+  "text.autoconfig.forgivingvoid.option.triggerInEnd": "Trigger in End",
+  "text.autoconfig.forgivingvoid.option.disableVanillaAntiCheatWhileFalling": "Disable Vanilla AntiCheat While Falling",
+  "text.autoconfig.forgivingvoid.option.dimensionAllowList": "Dimension Allow List",
+  "text.autoconfig.forgivingvoid.option.dimensionDenyList": "Dimension Deny List"
+}

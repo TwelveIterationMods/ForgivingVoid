@@ -1,0 +1,13 @@
+{
+  "text.autoconfig.forgivingvoid.title": "너그러운 빈 공간",
+  "text.autoconfig.forgivingvoid.option.triggerAtY": "Y에서 트리거",
+  "text.autoconfig.forgivingvoid.option.damageOnFall": "추락 피해",
+  "text.autoconfig.forgivingvoid.option.fallingHeight": "낙하 높이",
+  "text.autoconfig.forgivingvoid.option.preventDeath": "사망 방지",
+  "text.autoconfig.forgivingvoid.option.triggerInOverworld": "오버월드에서 트리거",
+  "text.autoconfig.forgivingvoid.option.triggerInNether": "네더에서 트리거",
+  "text.autoconfig.forgivingvoid.option.triggerInEnd": "엔드에서 트리거",
+  "text.autoconfig.forgivingvoid.option.disableVanillaAntiCheatWhileFalling": "추락하는 동안 바닐라 안티치트 비활성화",
+  "text.autoconfig.forgivingvoid.option.dimensionAllowList": "차원 허용 목록",
+  "text.autoconfig.forgivingvoid.option.dimensionDenyList": "차원 거부 목록"
+}

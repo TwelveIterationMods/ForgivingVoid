@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[37,)"
+loaderVersion="[38,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/ModdingForBlockheads/ForgivingVoid/issues"
 
@@ -18,18 +18,18 @@ Makes the void hate you a little less (and vice-versa). Fall down and come back 
 [[dependencies.forgivingvoid]]
     modId="forge"
     mandatory=true
-    versionRange="[37,)"
+    versionRange="[38,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.forgivingvoid]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17.1,1.18)"
+    versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.forgivingvoid]]
     modId="balm"
     mandatory=true
-    versionRange="[1.8.0,)"
+    versionRange="[2.1.0,)"
     ordering="NONE"
     side="BOTH"

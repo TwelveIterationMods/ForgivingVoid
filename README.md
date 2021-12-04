@@ -4,7 +4,7 @@ Minecraft Mod. Makes the void hate you a little less (and vice-versa). Fall down
 
 See [the license](LICENSE) for modpack permissions etc.
 
-This mod is available for both Forge and Fabric (starting Minecraft 1.17). This is a trial run to see if supporting both platforms is feasible.
+This mod is available for both Forge and Fabric (starting Minecraft 1.17).
 
 #### Forge
 
@@ -12,7 +12,7 @@ This mod is available for both Forge and Fabric (starting Minecraft 1.17). This 
 
 #### Fabric
 
-[![Versions](http://cf.way2muchnoise.eu/versions/_latest.svg)](https://minecraft.curseforge.com/projects/forgiving-void-fabric) [![Downloads](http://cf.way2muchnoise.eu/full__downloads.svg)](https://minecraft.curseforge.com/projects/forgiving-void-fabric)
+[![Versions](http://cf.way2muchnoise.eu/versions/547687_latest.svg)](https://minecraft.curseforge.com/projects/forgiving-void-fabric) [![Downloads](http://cf.way2muchnoise.eu/full_547687_downloads.svg)](https://minecraft.curseforge.com/projects/forgiving-void-fabric)
 
 ## Contributing
 

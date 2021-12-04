@@ -11,7 +11,7 @@ import java.util.List;
 public class ForgivingVoidConfigData implements BalmConfigData {
 
     @Comment("The y level at which Forgiving Void should forgive the player and send them towards the sky.")
-    public int triggerAtY = -32;
+    public int triggerAtY = -96;
 
     @Comment("The amount of damage applied to the player when they land.")
     public int damageOnFall = 19;

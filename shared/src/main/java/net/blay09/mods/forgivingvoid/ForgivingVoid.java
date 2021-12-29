@@ -32,7 +32,8 @@ public class ForgivingVoid {
     }
 
     public static void onPlayerTick(ServerPlayer player) {
-        boolean isInVoid = player.getY() < ForgivingVoidConfig.getActive().triggerAtY && player.yo < ForgivingVoidConfig.getActive().triggerAtY;
+        int triggerAtY = player.level.getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
+        boolean isInVoid = player.getY() < triggerAtY && player.yo < triggerAtY;
         boolean isTeleporting = ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
         if (isEnabledForDimension(player.level.dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(player)) {

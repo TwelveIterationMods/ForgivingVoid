@@ -10,11 +10,16 @@ minecraft {
 }
 
 dependencies {
-    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
-    compileOnly "mcp.mobius.waila:wthit-api:mojmap-5.5.1"
-    compileOnly("net.blay09.mods:balm-fabric:${balm_fabric_version}:dev") {
-        exclude(group: "net.fabricmc", module: "fabric-loader")
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+
+    compileOnly("net.blay09.mods:balm-common:${balm_version}") {
+        exclude(group: "net.blay09.mods", module: "shared-bridge")
+        changing = balm_version.endsWith("SNAPSHOT")
+    }
+
+    compileOnly("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
         exclude(group: "net.fabricmc.fabric-api")
+        exclude(group: "net.fabricmc")
     }
 }
 

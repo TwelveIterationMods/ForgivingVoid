@@ -1,13 +1,13 @@
 package net.blay09.mods.forgivingvoid;
 
-import me.shedaniel.autoconfig.annotation.Config;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
+import net.blay09.mods.balm.api.config.Config;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Config(name = ForgivingVoid.MOD_ID)
+@Config(ForgivingVoid.MOD_ID)
 public class ForgivingVoidConfigData implements BalmConfigData {
 
     @Comment("The distance to the minimum y level at which Forgiving Void should forgive the player and send them towards the sky.")

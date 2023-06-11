@@ -32,11 +32,11 @@ public class ForgivingVoid {
     }
 
     public static void onPlayerTick(ServerPlayer player) {
-        int triggerAtY = player.level.getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
+        int triggerAtY = player.level().getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
         boolean isInVoid = player.getY() < triggerAtY && player.yo < triggerAtY;
         boolean isTeleporting = ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
-        if (isEnabledForDimension(player.level.dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(player)) {
+        if (isEnabledForDimension(player.level().dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(player)) {
             player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
             if (player.isVehicle()) {
                 player.ejectPassengers();
@@ -50,7 +50,7 @@ public class ForgivingVoid {
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             final BlockPos playerPos = player.blockPosition();
-            if (player.isInWater() || player.isOnGround() || player.getAbilities().flying || player.getAbilities().mayfly || player.level.getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
+            if (player.isInWater() || player.onGround() || player.getAbilities().flying || player.getAbilities().mayfly || player.level().getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
 
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
                 ((ServerPlayerAccessor) player).setIsChangingDimension(false);

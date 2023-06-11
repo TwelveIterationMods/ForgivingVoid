@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/TwelveIterationMods/ForgivingVoid/issues"
 
 [[mods]]
 modId="forgivingvoid"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="Forgiving Void"
 displayURL="https://mods.twelveiterations.com/mc/forgivingvoid"
 logoFile="forgivingvoid-icon.png"

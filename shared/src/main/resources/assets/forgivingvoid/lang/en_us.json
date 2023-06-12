@@ -1,13 +1,23 @@
 {
   "config.forgivingvoid.title": "Forgiving Void",
-  "config.forgivingvoid.triggerAtY": "Trigger at Y",
+  "config.forgivingvoid.triggerAtDistanceBelow": "Trigger at Distance Below",
+  "config.forgivingvoid.triggerAtDistanceBelow.tooltip": "The distance to the minimum y level at which Forgiving Void should forgive the player and send them towards the sky.",
   "config.forgivingvoid.damageOnFall": "Damage on Fall",
+  "config.forgivingvoid.damageOnFall.tooltip": "The amount of damage applied to the player when they land.",
   "config.forgivingvoid.fallingHeight": "Falling Height",
+  "config.forgivingvoid.fallingHeight.tooltip": "The height from which the player will be falling after falling through the void.",
   "config.forgivingvoid.preventDeath": "Prevent Death",
+  "config.forgivingvoid.preventDeath.tooltip": "Prevent death on void fall (limits damage to leave at least 0.5 hearts)",
   "config.forgivingvoid.triggerInOverworld": "Trigger in Overworld",
+  "config.forgivingvoid.triggerInOverworld.tooltip": "Set to false to make Forgiving Void not trigger in the overworld void (dimension 0).",
   "config.forgivingvoid.triggerInNether": "Trigger in Nether",
+  "config.forgivingvoid.triggerInNether.tooltip": "Set to false to make Forgiving Void not trigger in the nether void (dimension -1).",
   "config.forgivingvoid.triggerInEnd": "Trigger in End",
+  "config.forgivingvoid.triggerInEnd.tooltip": "Set to false to make Forgiving Void not trigger in the end void (dimension 1).",
   "config.forgivingvoid.disableVanillaAntiCheatWhileFalling": "Disable Vanilla AntiCheat While Falling",
+  "config.forgivingvoid.disableVanillaAntiCheatWhileFalling.tooltip": "Set to true if players are rubber-banding while falling through the void. If you're hosting a public server, you should only do this if you have proper anti-cheat installed.",
   "config.forgivingvoid.dimensionAllowList": "Dimension Allow List",
-  "config.forgivingvoid.dimensionDenyList": "Dimension Deny List"
+  "config.forgivingvoid.dimensionAllowList.tooltip": "List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.",
+  "config.forgivingvoid.dimensionDenyList": "Dimension Deny List",
+  "config.forgivingvoid.dimensionDenyList.tooltip": "List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set."
 }

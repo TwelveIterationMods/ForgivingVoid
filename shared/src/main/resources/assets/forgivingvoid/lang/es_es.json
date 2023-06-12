@@ -1,13 +1,13 @@
 {
-  "text.autoconfig.forgivingvoid.title": "Vacío piadoso",
-  "text.autoconfig.forgivingvoid.option.triggerAtY": "Activar en Y",
-  "text.autoconfig.forgivingvoid.option.damageOnFall": "Daño al caer",
-  "text.autoconfig.forgivingvoid.option.fallingHeight": "Altura de caída",
-  "text.autoconfig.forgivingvoid.option.preventDeath": "Prevenir muerte",
-  "text.autoconfig.forgivingvoid.option.triggerInOverworld": "Activar en la superficie",
-  "text.autoconfig.forgivingvoid.option.triggerInNether": "Activar en el Nether",
-  "text.autoconfig.forgivingvoid.option.triggerInEnd": "Activar en el End",
-  "text.autoconfig.forgivingvoid.option.disableVanillaAntiCheatWhileFalling": "Desactivar el antitrampa predeterminado al caer",
-  "text.autoconfig.forgivingvoid.option.dimensionAllowList": "Lista de dimensiones permitidas",
-  "text.autoconfig.forgivingvoid.option.dimensionDenyList": "Lista de dimensiones denegadas"
+  "config.forgivingvoid.title": "Vacío piadoso",
+  "config.forgivingvoid.triggerAtY": "Activar en Y",
+  "config.forgivingvoid.damageOnFall": "Daño al caer",
+  "config.forgivingvoid.fallingHeight": "Altura de caída",
+  "config.forgivingvoid.preventDeath": "Prevenir muerte",
+  "config.forgivingvoid.triggerInOverworld": "Activar en la superficie",
+  "config.forgivingvoid.triggerInNether": "Activar en el Nether",
+  "config.forgivingvoid.triggerInEnd": "Activar en el End",
+  "config.forgivingvoid.disableVanillaAntiCheatWhileFalling": "Desactivar el antitrampa predeterminado al caer",
+  "config.forgivingvoid.dimensionAllowList": "Lista de dimensiones permitidas",
+  "config.forgivingvoid.dimensionDenyList": "Lista de dimensiones denegadas"
 }

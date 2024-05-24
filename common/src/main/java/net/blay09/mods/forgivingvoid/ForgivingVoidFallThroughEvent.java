@@ -1,18 +1,18 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.balm.api.event.BalmEvent;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 
 public class ForgivingVoidFallThroughEvent extends BalmEvent {
 
-    private final Player player;
+    private final Entity entity;
 
-    public ForgivingVoidFallThroughEvent(Player player) {
-        this.player = player;
+    public ForgivingVoidFallThroughEvent(Entity entity) {
+        this.entity = entity;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Entity getEntity() {
+        return entity;
     }
 
 }

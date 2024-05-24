@@ -13,12 +13,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
+import java.util.Set;
 
 public class ForgivingVoid {
 
@@ -32,37 +35,61 @@ public class ForgivingVoid {
     }
 
     public static void onPlayerTick(ServerPlayer player) {
-        int triggerAtY = player.level().getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
-        boolean isInVoid = player.getY() < triggerAtY && player.yo < triggerAtY;
-        boolean isTeleporting = ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
-        CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
-        if (isEnabledForDimension(player.level().dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(player)) {
-            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
-            if (player.isVehicle()) {
-                player.ejectPassengers();
+        onEntityTick(player);
+    }
+
+    public static void onEntityTick(Entity entity) {
+        int triggerAtY = entity.level().getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
+        boolean isInVoid = entity.getY() < triggerAtY && entity.yo < triggerAtY;
+        boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
+        CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
+        if (isEnabledForDimension(entity.level().dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(entity)) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
+            }
+            if (entity.isVehicle()) {
+                entity.ejectPassengers();
             }
 
-            player.stopRiding();
+            entity.stopRiding();
 
-            ((ServerPlayerAccessor) player).setIsChangingDimension(true);
-            player.teleportTo(player.getX(), ForgivingVoidConfig.getActive().fallingHeight, player.getZ());
+            ((ServerPlayerAccessor) entity).setIsChangingDimension(true);
+            entity.teleportTo(entity.getX(), ForgivingVoidConfig.getActive().fallingHeight, entity.getZ());
             persistentData.putBoolean("ForgivingVoidIsFalling", true);
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
-            final BlockPos playerPos = player.blockPosition();
-            if (player.isInWater() || player.onGround() || player.getAbilities().flying || player.getAbilities().mayfly || player.level().getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
-
+            final BlockPos playerPos = entity.blockPosition();
+            if (hasLanded(entity) || isOrMayFly(entity)) {
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
-                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
+                ((ServerPlayerAccessor) entity).setIsChangingDimension(false);
                 return;
             }
 
             if (ForgivingVoidConfig.getActive().disableVanillaAntiCheatWhileFalling) {
                 // Vanilla's AntiCheat is triggers on falling and teleports, even in Vanilla.
                 // So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
-                ((ServerPlayerAccessor) player).setIsChangingDimension(true);
+                ((ServerPlayerAccessor) entity).setIsChangingDimension(true);
             }
         }
+    }
+
+    public static final Set<Block> FALL_CATCHING_BLOCKS = Set.of(Blocks.COBWEB);
+
+    private static boolean hasLanded(Entity entity) {
+        if (entity.onGround() || entity.isInWater() || entity.isInLava()) {
+            return true;
+        }
+
+        final var landedOnState = entity.level().getBlockState(entity.blockPosition());
+        return FALL_CATCHING_BLOCKS.contains(landedOnState.getBlock());
+    }
+
+    private static boolean isOrMayFly(Entity entity) {
+        if (!(entity instanceof Player player)) {
+            return false;
+        }
+
+        return player.getAbilities().flying || player.getAbilities().mayfly;
     }
 
     public static void onPlayerFall(LivingFallEvent event) {
@@ -82,8 +109,8 @@ public class ForgivingVoid {
         }
     }
 
-    private static boolean fireForgivingVoidEvent(Player player) {
-        ForgivingVoidFallThroughEvent event = new ForgivingVoidFallThroughEvent(player);
+    private static boolean fireForgivingVoidEvent(Entity entity) {
+        ForgivingVoidFallThroughEvent event = new ForgivingVoidFallThroughEvent(entity);
         Balm.getEvents().fireEvent(event);
         return !event.isCanceled();
     }

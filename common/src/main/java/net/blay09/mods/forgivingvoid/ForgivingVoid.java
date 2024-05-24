@@ -30,7 +30,7 @@ public class ForgivingVoid {
     public static void initialize() {
         ForgivingVoidConfig.initialize();
 
-        Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onPlayerFall);
+        Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
         Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
     }
 
@@ -92,7 +92,7 @@ public class ForgivingVoid {
         return player.getAbilities().flying || player.getAbilities().mayfly;
     }
 
-    public static void onPlayerFall(LivingFallEvent event) {
+    public static void onLivingEntityFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity instanceof ServerPlayer player) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(player);

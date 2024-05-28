@@ -6,7 +6,7 @@ import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
 import net.blay09.mods.forgivingvoid.mixin.ServerGamePacketListenerImplAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ServerPlayerAccessor;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.List;
 import java.util.Set;
 
 public class ForgivingVoid {
@@ -31,7 +30,12 @@ public class ForgivingVoid {
         ForgivingVoidConfig.initialize();
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
-        Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
+        final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
+        if (entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(new ResourceLocation("player")))) {
+            Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
+        } else {
+            Balm.getEvents().onTickEvent(TickType.Entity, TickPhase.Start, ForgivingVoid::onEntityTick);
+        }
     }
 
     public static void onPlayerTick(ServerPlayer player) {
@@ -39,11 +43,15 @@ public class ForgivingVoid {
     }
 
     public static void onEntityTick(Entity entity) {
+        if (!isAllowedEntity(entity)) {
+            return;
+        }
+
         int triggerAtY = entity.level().getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
         boolean isInVoid = entity.getY() < triggerAtY && entity.yo < triggerAtY;
         boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
-        if (isEnabledForDimension(entity.level().dimension()) && isInVoid && !isTeleporting && fireForgivingVoidEvent(entity)) {
+        if (isInVoid && !isTeleporting && isEnabledForDimension(entity.level().dimension()) && fireForgivingVoidEvent(entity)) {
             if (entity instanceof LivingEntity livingEntity) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
             }
@@ -53,24 +61,41 @@ public class ForgivingVoid {
 
             entity.stopRiding();
 
-            ((ServerPlayerAccessor) entity).setIsChangingDimension(true);
+            if (entity instanceof ServerPlayerAccessor player) {
+                player.setIsChangingDimension(true);
+            }
             entity.teleportTo(entity.getX(), ForgivingVoidConfig.getActive().fallingHeight, entity.getZ());
             persistentData.putBoolean("ForgivingVoidIsFalling", true);
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
-            final BlockPos playerPos = entity.blockPosition();
             if (hasLanded(entity) || isOrMayFly(entity)) {
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
-                ((ServerPlayerAccessor) entity).setIsChangingDimension(false);
+                if (entity instanceof ServerPlayerAccessor player) {
+                    player.setIsChangingDimension(false);
+                }
                 return;
             }
 
-            if (ForgivingVoidConfig.getActive().disableVanillaAntiCheatWhileFalling) {
+            if (ForgivingVoidConfig.getActive().disableVanillaAntiCheatWhileFalling && entity instanceof ServerPlayerAccessor player) {
                 // Vanilla's AntiCheat is triggers on falling and teleports, even in Vanilla.
                 // So I'll just disable it until the player lands, so it doesn't look like it's my mod causing the issue.
-                ((ServerPlayerAccessor) entity).setIsChangingDimension(true);
+                player.setIsChangingDimension(true);
             }
         }
+    }
+
+    private static boolean isAllowedEntity(Entity entity) {
+        final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
+        final var entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        if (entityAllowList.isEmpty() && entity instanceof Player) {
+            return true;
+        }
+
+        if (entityAllowList.contains(entityId)) {
+            return true;
+        }
+
+        return false;
     }
 
     public static final Set<Block> FALL_CATCHING_BLOCKS = Set.of(Blocks.COBWEB);
@@ -94,17 +119,19 @@ public class ForgivingVoid {
 
     public static void onLivingEntityFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity instanceof ServerPlayer player) {
-            CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
+        if (isAllowedEntity(entity)) {
+            CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
             if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
                 float damage = ForgivingVoidConfig.getActive().damageOnFall;
-                if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
-                    damage = player.getHealth() - 1f;
+                if (ForgivingVoidConfig.getActive().preventDeath && entity.getHealth() - damage <= 0) {
+                    damage = entity.getHealth() - 1f;
                 }
 
                 event.setFallDamageOverride(damage);
 
-                ((ServerPlayerAccessor) player).setIsChangingDimension(false);
+                if (entity instanceof ServerPlayerAccessor player) {
+                    player.setIsChangingDimension(false);
+                }
             }
         }
     }
@@ -124,12 +151,12 @@ public class ForgivingVoid {
             return ForgivingVoidConfig.getActive().triggerInNether;
         } else {
             final ResourceLocation dimension = dimensionKey.location();
-            List<String> dimensionAllowList = ForgivingVoidConfig.getActive().dimensionAllowList;
-            List<String> dimensionDenyList = ForgivingVoidConfig.getActive().dimensionDenyList;
-            if (!dimensionAllowList.isEmpty() && !dimensionAllowList.contains(dimension.toString())) {
+            final var dimensionAllowList = ForgivingVoidConfig.getActive().dimensionAllowList;
+            final var dimensionDenyList = ForgivingVoidConfig.getActive().dimensionDenyList;
+            if (!dimensionAllowList.isEmpty() && !dimensionAllowList.contains(dimension)) {
                 return false;
             } else {
-                return !dimensionDenyList.contains(dimension.toString());
+                return !dimensionDenyList.contains(dimension);
             }
         }
     }

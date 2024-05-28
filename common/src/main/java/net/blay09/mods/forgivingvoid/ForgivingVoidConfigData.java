@@ -3,9 +3,13 @@ package net.blay09.mods.forgivingvoid;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
 import net.blay09.mods.balm.api.config.Config;
+import net.blay09.mods.balm.api.config.ExpectedType;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Config(ForgivingVoid.MOD_ID)
 public class ForgivingVoidConfigData implements BalmConfigData {
@@ -35,9 +39,15 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     public boolean disableVanillaAntiCheatWhileFalling = true;
 
     @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
-    public List<String> dimensionAllowList = new ArrayList<>();
+    @ExpectedType(ResourceLocation.class)
+    public Set<ResourceLocation> dimensionAllowList = new HashSet<>();
 
     @Comment("List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set.")
-    public List<String> dimensionDenyList = new ArrayList<>();
+    @ExpectedType(ResourceLocation.class)
+    public Set<ResourceLocation> dimensionDenyList = new HashSet<>();
+
+    @Comment("List of entity ids to be allowed for Forgiving Void. Slightly more performance-intensive if you include non-player entities. Only supports living entities on Forge.")
+    @ExpectedType(ResourceLocation.class)
+    public Set<ResourceLocation> entityAllowList = Set.of(new ResourceLocation("player"));
 
 }

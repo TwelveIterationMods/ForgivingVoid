@@ -49,7 +49,7 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @ExpectedType(ResourceLocation.class)
     public Set<ResourceLocation> dimensionDenyList = new HashSet<>();
 
-    @Comment("List of entity ids to be allowed for Forgiving Void. Only supports living entities on Forge.")
+    @Comment("List of entity ids to be allowed for Forgiving Void. On Forge this only supports living entities.")
     @ExpectedType(ResourceLocation.class)
     public Set<ResourceLocation> entityAllowList = Set.of(new ResourceLocation("player"));
 

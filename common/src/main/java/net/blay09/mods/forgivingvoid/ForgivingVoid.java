@@ -6,6 +6,7 @@ import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
 import net.blay09.mods.forgivingvoid.mixin.ServerGamePacketListenerImplAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ServerPlayerAccessor;
+import net.blay09.mods.forgivingvoid.mixin.ThrownTridentAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -16,6 +17,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -31,7 +33,9 @@ public class ForgivingVoid {
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
         final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
-        if (entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(new ResourceLocation("player")))) {
+        final var onlyPlayersExplicitlyAllowed = entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(new ResourceLocation("player")));
+        final var otherEntitiesImplicitlyAllowed = ForgivingVoidConfig.getActive().tridentForgiveness;
+        if (onlyPlayersExplicitlyAllowed && !otherEntitiesImplicitlyAllowed) {
             Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
         } else {
             Balm.getEvents().onTickEvent(TickType.Entity, TickPhase.Start, ForgivingVoid::onEntityTick);
@@ -91,11 +95,15 @@ public class ForgivingVoid {
             return true;
         }
 
-        if (entityAllowList.contains(entityId)) {
-            return true;
+        if (ForgivingVoidConfig.getActive().tridentForgiveness && entity instanceof ThrownTrident trident) {
+            final var loyalty = trident.getEntityData().get(ThrownTridentAccessor.getIdLoyalty());
+            //noinspection UnreachableCode
+            if (loyalty > 0) {
+                return true;
+            }
         }
 
-        return false;
+        return entityAllowList.contains(entityId);
     }
 
     public static final Set<Block> FALL_CATCHING_BLOCKS = Set.of(Blocks.COBWEB);

@@ -38,6 +38,9 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @Comment("Set to true if players are rubber-banding while falling through the void. If you're hosting a public server, you should only do this if you have proper anti-cheat installed.")
     public boolean disableVanillaAntiCheatWhileFalling = true;
 
+    @Comment("Set to true to have tridents with loyalty be affected by Forgiving Void. Not supported on Forge.")
+    public boolean tridentForgiveness = false;
+
     @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
     @ExpectedType(ResourceLocation.class)
     public Set<ResourceLocation> dimensionAllowList = new HashSet<>();
@@ -46,7 +49,7 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @ExpectedType(ResourceLocation.class)
     public Set<ResourceLocation> dimensionDenyList = new HashSet<>();
 
-    @Comment("List of entity ids to be allowed for Forgiving Void. Slightly more performance-intensive if you include non-player entities. Only supports living entities on Forge.")
+    @Comment("List of entity ids to be allowed for Forgiving Void. Only supports living entities on Forge.")
     @ExpectedType(ResourceLocation.class)
     public Set<ResourceLocation> entityAllowList = Set.of(new ResourceLocation("player"));
 

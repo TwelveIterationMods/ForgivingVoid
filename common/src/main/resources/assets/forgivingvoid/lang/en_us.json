@@ -1,4 +1,5 @@
 {
+  "death.fell.forgivingvoid": "%1$s fell from the top of the world",
   "config.forgivingvoid.title": "Forgiving Void",
   "config.forgivingvoid.triggerAtDistanceBelow": "Trigger at Distance Below",
   "config.forgivingvoid.triggerAtDistanceBelow.tooltip": "The distance to the minimum y level at which Forgiving Void should forgive the player and send them towards the sky.",

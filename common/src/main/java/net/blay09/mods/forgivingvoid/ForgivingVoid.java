@@ -1,6 +1,7 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.event.LivingDamageEvent;
 import net.blay09.mods.balm.api.event.LivingFallEvent;
 import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;

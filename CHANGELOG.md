@@ -1,3 +1,5 @@
+Updated to Minecraft 1.21
+
 - Updated to Minecraft 1.20.6
 - Added tridentForgiveness option (default: off) to make thrown tridents with loyalty return from the top of the world (not supported on Forge)
 - Added entityAllowList option to allow other entities to also be forgiven in the void. On Forge this only supports living entities.

@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.20
+- Fixed dimensionAllowList and dimensionDenyList failing to load

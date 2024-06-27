@@ -3,6 +3,7 @@ package net.blay09.mods.forgivingvoid;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
 import net.blay09.mods.balm.api.config.Config;
+import net.blay09.mods.balm.api.config.ExpectedType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,11 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     public boolean disableVanillaAntiCheatWhileFalling = true;
 
     @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
+    @ExpectedType(String.class)
     public List<String> dimensionAllowList = new ArrayList<>();
 
     @Comment("List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set.")
+    @ExpectedType(String.class)
     public List<String> dimensionDenyList = new ArrayList<>();
 
 }

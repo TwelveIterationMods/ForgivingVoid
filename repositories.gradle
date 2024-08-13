@@ -41,6 +41,7 @@ repositories {
         url = "https://jm.gserv.me/repository/maven-public/"
         content {
             includeGroup "info.journeymap"
+            includeGroup "mysticdrew"
         }
     }
 
@@ -48,6 +49,7 @@ repositories {
         url = 'https://jitpack.io'
         content {
             includeGroup "com.github.BlueMap-Minecraft"
+            includeGroup "com.github.mattidragon"
         }
     }
 
@@ -62,6 +64,14 @@ repositories {
         url "https://maven.siphalor.de/"
         content {
             includeGroup "de.siphalor"
+        }
+    }
+
+    maven {
+        url = "https://dl.cloudsmith.io/public/novamachina-mods/release/maven/"
+        content {
+            includeGroup "novamachina.novacore"
+            includeGroup "novamachina.exnihilosequentia"
         }
     }
 }

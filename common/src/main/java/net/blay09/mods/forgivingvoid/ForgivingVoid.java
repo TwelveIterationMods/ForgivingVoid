@@ -52,7 +52,7 @@ public class ForgivingVoid {
             return;
         }
 
-        int triggerAtY = entity.level().getMinBuildHeight() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
+        int triggerAtY = entity.level().getMinY() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
         boolean isInVoid = entity.getY() < triggerAtY && entity.yo < triggerAtY;
         boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);

@@ -6,7 +6,6 @@ import net.blay09.mods.balm.api.config.Config;
 import net.blay09.mods.balm.api.config.ExpectedType;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +45,10 @@ public class ForgivingVoidConfigData implements BalmConfigData {
 
     @Comment("Set to true to have tridents with loyalty be affected by Forgiving Void. Not supported on Forge.")
     public boolean tridentForgiveness = false;
+
+    @ExpectedType(String.class)
+    @Comment("Effects applied to a player when they fall through the void, in the format \"effect|duration|amplifier\"")
+    public List<String> fallThroughVoidEffects = List.of("minecraft:blindness|60|3");
 
     @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
     @ExpectedType(ResourceLocation.class)

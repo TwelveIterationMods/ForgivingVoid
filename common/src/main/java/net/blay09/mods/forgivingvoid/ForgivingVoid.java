@@ -24,6 +24,9 @@ import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -31,6 +34,8 @@ import java.util.Set;
 public class ForgivingVoid {
 
     public static final String MOD_ID = "forgivingvoid";
+
+    public static final Logger logger = LoggerFactory.getLogger(ForgivingVoid.class);
 
     public static void initialize() {
         ConfigLocalization.enableModernTranslationKeys(MOD_ID);
@@ -55,7 +60,7 @@ public class ForgivingVoid {
 
         if (isInVoid && !isTeleporting && isEnabledForDimension(entity.level().dimension()) && fireForgivingVoidEvent(entity)) {
             if (entity instanceof LivingEntity livingEntity) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
+                applyFallThroughVoidEffects(livingEntity);
             }
 
             final var entitiesToTeleport = new ArrayList<Entity>();
@@ -107,6 +112,36 @@ public class ForgivingVoid {
                 player.setIsChangingDimension(true);
             }
         }
+    }
+
+    private static void applyFallThroughVoidEffects(LivingEntity entity) {
+        for (String effectString : ForgivingVoidConfig.getActive().fallThroughVoidEffects) {
+            String[] parts = effectString.split("\\|");
+            ResourceLocation registryName = ResourceLocation.tryParse(parts[0]);
+            if (registryName != null) {
+                final var holder = BuiltInRegistries.MOB_EFFECT.getHolder(registryName);
+                if (holder.isPresent()) {
+                    int duration = tryParseInt(parts.length >= 2 ? parts[1] : null, 600);
+                    int amplifier = tryParseInt(parts.length >= 3 ? parts[2] : null, 0);
+                    entity.addEffect(new MobEffectInstance(holder.get(), duration, amplifier));
+                } else {
+                    ForgivingVoid.logger.info("Invalid fall through void effect '{}'", parts[0]);
+                }
+            } else {
+                ForgivingVoid.logger.info("Invalid fall through void effect '{}'", parts[0]);
+            }
+        }
+    }
+
+    private static int tryParseInt(@Nullable String text, int defaultVal) {
+        if (text != null) {
+            try {
+                return Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                return defaultVal;
+            }
+        }
+        return defaultVal;
     }
 
     private static boolean isAllowedEntity(Entity entity) {

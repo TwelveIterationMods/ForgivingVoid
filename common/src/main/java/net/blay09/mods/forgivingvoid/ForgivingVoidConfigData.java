@@ -26,6 +26,9 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @Comment("The height from which the player will be falling after falling through the void.")
     public int fallingHeight = 300;
 
+    @Comment("Set to true to make Forgiving Void return the player to the sky above their last grounded position instead of their current position. Prevents players from using Forgiving Void to fly across larger distances.")
+    public boolean returnToLastGrounded = true;
+
     @Comment("Prevent death on void fall (limits damage to leave at least 0.5 hearts)")
     public boolean preventDeath = false;
 

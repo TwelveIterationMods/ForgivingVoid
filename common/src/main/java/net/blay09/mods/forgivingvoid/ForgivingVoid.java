@@ -8,8 +8,10 @@ import net.blay09.mods.balm.common.config.ConfigLocalization;
 import net.blay09.mods.forgivingvoid.mixin.ServerGamePacketListenerImplAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ServerPlayerAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ThrownTridentAccessor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,6 +49,10 @@ public class ForgivingVoid {
         boolean isInVoid = entity.getY() < triggerAtY && entity.yo < triggerAtY;
         boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
+        if (entity.onGround()) {
+            persistentData.putLong("LastGroundedPos", entity.blockPosition().asLong());
+        }
+
         if (isInVoid && !isTeleporting && isEnabledForDimension(entity.level().dimension()) && fireForgivingVoidEvent(entity)) {
             if (entity instanceof LivingEntity livingEntity) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
@@ -70,8 +76,15 @@ public class ForgivingVoid {
                     if (teleportedEntity instanceof ServerPlayerAccessor player) {
                         player.setIsChangingDimension(true);
                     }
+                    final var entityPersistentData = Balm.getHooks().getPersistentData(teleportedEntity);
                     teleportedEntity.teleportTo(teleportedEntity.getX(), ForgivingVoidConfig.getActive().fallingHeight, teleportedEntity.getZ());
-                    Balm.getHooks().getPersistentData(teleportedEntity).putBoolean("ForgivingVoidIsFalling", true);
+                    final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
+                    final var lastGroundedPos = entityPersistentData.contains("LastGroundedPos") ? BlockPos.of(entityPersistentData.getLong("LastGroundedPos")) : entity.blockPosition();
+                    final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : entity.getX();
+                    final var y = ForgivingVoidConfig.getActive().fallingHeight;
+                    final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : entity.getZ();
+                    entity.teleportTo(x, y, z);
+                    entityPersistentData.putBoolean("ForgivingVoidIsFalling", true);
                 }
             });
 

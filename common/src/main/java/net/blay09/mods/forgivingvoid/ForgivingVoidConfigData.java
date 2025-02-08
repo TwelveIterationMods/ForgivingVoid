@@ -16,8 +16,11 @@ public class ForgivingVoidConfigData implements BalmConfigData {
     @Comment("The distance to the minimum y level at which Forgiving Void should forgive the player and send them towards the sky.")
     public int triggerAtDistanceBelow = 32;
 
+    @Comment("Set to ABSOLUTE for absolute fall damage in half hearts, RELATIVE_CURRENT for a percentage of their current health, or RELATIVE_MAX for a percentage of their max health.")
+    public DamageOnFallMode damageOnFallMode = DamageOnFallMode.ABSOLUTE;
+
     @Comment("The amount of damage applied to the player when they land.")
-    public int damageOnFall = 19;
+    public float damageOnFall = 19;
 
     @Comment("The height from which the player will be falling after falling through the void.")
     public int fallingHeight = 300;

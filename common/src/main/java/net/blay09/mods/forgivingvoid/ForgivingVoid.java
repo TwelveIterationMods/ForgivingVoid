@@ -1,7 +1,6 @@
 package net.blay09.mods.forgivingvoid;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.LivingDamageEvent;
 import net.blay09.mods.balm.api.event.LivingFallEvent;
 import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
@@ -192,11 +191,8 @@ public class ForgivingVoid {
         if (isAllowedEntity(entity)) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
             if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
-                float damage = ForgivingVoidConfig.getActive().damageOnFall;
-                if (ForgivingVoidConfig.getActive().preventDeath && entity.getHealth() - damage <= 0) {
-                    damage = entity.getHealth() - 1f;
-                }
-
+                final var config = ForgivingVoidConfig.getActive();
+                final var damage = calculateFallDamage(config, entity);
                 event.setFallDamageOverride(damage);
 
                 if (entity instanceof ServerPlayerAccessor player) {
@@ -204,6 +200,23 @@ public class ForgivingVoid {
                 }
             }
         }
+    }
+
+    private static float calculateFallDamage(ForgivingVoidConfigData config, LivingEntity entity) {
+        float damage = config.damageOnFall;
+        // We normalize percentages if the user accidentally set a value out of 100.
+        if (config.damageOnFallMode != DamageOnFallMode.ABSOLUTE && damage > 1) {
+            damage = damage / 100f;
+        }
+        if (config.damageOnFallMode == DamageOnFallMode.RELATIVE_CURRENT) {
+            damage = entity.getHealth() * damage;
+        } else if (config.damageOnFallMode == DamageOnFallMode.RELATIVE_MAX) {
+            damage = entity.getMaxHealth() * damage;
+        }
+        if (config.preventDeath && entity.getHealth() - damage <= 0) {
+            damage = entity.getHealth() - 1f;
+        }
+        return damage;
     }
 
     private static boolean fireForgivingVoidEvent(Entity entity) {

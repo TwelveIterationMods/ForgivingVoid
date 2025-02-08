@@ -101,6 +101,10 @@ public class ForgivingVoid {
                     teleportedEntityData.putBoolean("ForgivingVoidIsFalling", true);
                 }
             });
+
+            if (vehicle != null) {
+                entity.startRiding(vehicle);
+            }
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             if (hasLanded(entity) || isOrMayFly(entity)) {

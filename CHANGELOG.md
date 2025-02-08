@@ -1,1 +1,3 @@
-- Updated to Minecraft 1.21.4
+- Added support for teleporting passengers and vehicles as well (as long as they are in the `entityAllowList`).
+  - It is recommended to set `damageOnFallMode` to either `RELATIVE_CURRENT` or `RELATIVE_MAX` since vehicles have less health than players. 
+- Added `damageOnFallMode` config option, which can be `ABSOLUTE` (half hearts as before), `RELATIVE_CURRENT` (percentage of current health), or `RELATIVE_MAX` (percentage of max health).

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class ForgivingVoid {
@@ -72,22 +73,35 @@ public class ForgivingVoid {
             if (entity instanceof LivingEntity livingEntity) {
                 applyFallThroughVoidEffects(livingEntity);
             }
+
+            final var entitiesToTeleport = new ArrayList<Entity>();
+            entitiesToTeleport.add(entity);
             if (entity.isVehicle()) {
+                entitiesToTeleport.addAll(entity.getPassengers());
                 entity.ejectPassengers();
             }
 
-            entity.stopRiding();
-
-            if (entity instanceof ServerPlayerAccessor player) {
-                player.setIsChangingDimension(true);
+            final var vehicle = entity.getVehicle();
+            if (vehicle != null) {
+                entitiesToTeleport.add(vehicle);
+                entity.stopRiding();
             }
-            final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
-            final var lastGroundedPos = persistentData.contains("LastGroundedPos") ? BlockPos.of(persistentData.getLong("LastGroundedPos")) : entity.blockPosition();
-            final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : entity.getX();
-            final var y = ForgivingVoidConfig.getActive().fallingHeight;
-            final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : entity.getZ();
-            entity.teleportTo(x, y, z);
-            persistentData.putBoolean("ForgivingVoidIsFalling", true);
+
+            entitiesToTeleport.forEach(teleportedEntity -> {
+                if (isAllowedEntity(teleportedEntity)) {
+                    if (teleportedEntity instanceof ServerPlayerAccessor player) {
+                        player.setIsChangingDimension(true);
+                    }
+                    final var teleportedEntityData = Balm.getHooks().getPersistentData(teleportedEntity);
+                    final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
+                    final var lastGroundedPos = teleportedEntityData.contains("LastGroundedPos") ? BlockPos.of(teleportedEntityData.getLong("LastGroundedPos")) : teleportedEntity.blockPosition();
+                    final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : teleportedEntity.getX();
+                    final var y = ForgivingVoidConfig.getActive().fallingHeight;
+                    final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : teleportedEntity.getZ();
+                    teleportedEntity.teleportTo(x, y, z);
+                    teleportedEntityData.putBoolean("ForgivingVoidIsFalling", true);
+                }
+            });
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             if (hasLanded(entity) || isOrMayFly(entity)) {

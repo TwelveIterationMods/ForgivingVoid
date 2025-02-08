@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class ForgivingVoid {
@@ -34,7 +35,8 @@ public class ForgivingVoid {
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
         final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
-        final var onlyPlayersExplicitlyAllowed = entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(ResourceLocation.withDefaultNamespace("player")));
+        final var onlyPlayersExplicitlyAllowed = entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(ResourceLocation.withDefaultNamespace(
+                "player")));
         final var otherEntitiesImplicitlyAllowed = ForgivingVoidConfig.getActive().tridentForgiveness;
         if (onlyPlayersExplicitlyAllowed && !otherEntitiesImplicitlyAllowed) {
             Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
@@ -60,17 +62,29 @@ public class ForgivingVoid {
             if (entity instanceof LivingEntity livingEntity) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 3));
             }
+
+            final var entitiesToTeleport = new ArrayList<Entity>();
+            entitiesToTeleport.add(entity);
             if (entity.isVehicle()) {
+                entitiesToTeleport.addAll(entity.getPassengers());
                 entity.ejectPassengers();
             }
 
-            entity.stopRiding();
-
-            if (entity instanceof ServerPlayerAccessor player) {
-                player.setIsChangingDimension(true);
+            final var vehicle = entity.getVehicle();
+            if (vehicle != null) {
+                entitiesToTeleport.add(vehicle);
+                entity.stopRiding();
             }
-            entity.teleportTo(entity.getX(), ForgivingVoidConfig.getActive().fallingHeight, entity.getZ());
-            persistentData.putBoolean("ForgivingVoidIsFalling", true);
+
+            entitiesToTeleport.forEach(teleportedEntity -> {
+                if (isAllowedEntity(teleportedEntity)) {
+                    if (teleportedEntity instanceof ServerPlayerAccessor player) {
+                        player.setIsChangingDimension(true);
+                    }
+                    teleportedEntity.teleportTo(teleportedEntity.getX(), ForgivingVoidConfig.getActive().fallingHeight, teleportedEntity.getZ());
+                    Balm.getHooks().getPersistentData(teleportedEntity).putBoolean("ForgivingVoidIsFalling", true);
+                }
+            });
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             if (hasLanded(entity) || isOrMayFly(entity)) {

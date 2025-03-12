@@ -10,12 +10,10 @@ import net.blay09.mods.forgivingvoid.mixin.ThrownTridentAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -93,7 +91,7 @@ public class ForgivingVoid {
                     }
                     final var teleportedEntityData = Balm.getHooks().getPersistentData(teleportedEntity);
                     final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
-                    final var lastGroundedPos = teleportedEntityData.contains("LastGroundedPos") ? BlockPos.of(teleportedEntityData.getLong("LastGroundedPos")) : teleportedEntity.blockPosition();
+                    final var lastGroundedPos = teleportedEntityData.getLong("LastGroundedPos").map(BlockPos::of).orElseGet(teleportedEntity::blockPosition);
                     final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : teleportedEntity.getX();
                     final var y = ForgivingVoidConfig.getActive().fallingHeight;
                     final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : teleportedEntity.getZ();
@@ -105,7 +103,7 @@ public class ForgivingVoid {
             if (vehicle != null) {
                 entity.startRiding(vehicle);
             }
-        } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
+        } else if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             if (hasLanded(entity) || isOrMayFly(entity)) {
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
@@ -194,7 +192,7 @@ public class ForgivingVoid {
         LivingEntity entity = event.getEntity();
         if (isAllowedEntity(entity)) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
-            if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
+            if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
                 final var config = ForgivingVoidConfig.getActive();
                 final var damage = calculateFallDamage(config, entity);
                 event.setFallDamageOverride(damage);

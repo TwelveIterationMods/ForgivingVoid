@@ -24,7 +24,7 @@ public class CombatTrackerMixin {
     @Inject(method = "getFallMessage(Lnet/minecraft/world/damagesource/CombatEntry;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/network/chat/Component;", at = @At("HEAD"), cancellable = true)
     public void getFallMessage(CombatEntry combatEntry, @Nullable Entity entity, CallbackInfoReturnable<Component> callbackInfoReturnable) {
         final var persistentData = Balm.getHooks().getPersistentData(mob);
-        if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
+        if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
             callbackInfoReturnable.setReturnValue(Component.translatable("death.fell.forgivingvoid", mob.getDisplayName()));
         }
     }

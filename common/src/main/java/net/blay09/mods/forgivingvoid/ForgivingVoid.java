@@ -204,7 +204,7 @@ public class ForgivingVoid {
         }
     }
 
-    private static float calculateFallDamage(ForgivingVoidConfigData config, LivingEntity entity) {
+    private static float calculateFallDamage(ForgivingVoidConfig config, LivingEntity entity) {
         float damage = config.damageOnFall;
         // We normalize percentages if the user accidentally set a value out of 100.
         if (config.damageOnFallMode != DamageOnFallMode.ABSOLUTE && damage > 1) {

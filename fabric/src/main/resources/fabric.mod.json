@@ -23,9 +23,6 @@
       "net.blay09.mods.forgivingvoid.fabric.FabricForgivingVoid"
     ],
     "client": [
-    ],
-    "modmenu": [
-      "net.blay09.mods.forgivingvoid.fabric.compat.ModMenuIntegration"
     ]
   },
   "mixins": [

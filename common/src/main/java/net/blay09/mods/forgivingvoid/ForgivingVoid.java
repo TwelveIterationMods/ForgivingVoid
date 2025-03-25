@@ -37,20 +37,8 @@ public class ForgivingVoid {
     public static void initialize() {
         ForgivingVoidConfig.initialize();
 
+        Balm.getEvents().onTickEvent(TickType.Entity, TickPhase.Start, ForgivingVoid::onEntityTick);
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
-        final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
-        final var onlyPlayersExplicitlyAllowed = entityAllowList.isEmpty() || (entityAllowList.size() == 1 && entityAllowList.contains(ResourceLocation.withDefaultNamespace(
-                "player")));
-        final var otherEntitiesImplicitlyAllowed = ForgivingVoidConfig.getActive().tridentForgiveness;
-        if (onlyPlayersExplicitlyAllowed && !otherEntitiesImplicitlyAllowed) {
-            Balm.getEvents().onTickEvent(TickType.ServerPlayer, TickPhase.Start, ForgivingVoid::onPlayerTick);
-        } else {
-            Balm.getEvents().onTickEvent(TickType.Entity, TickPhase.Start, ForgivingVoid::onEntityTick);
-        }
-    }
-
-    public static void onPlayerTick(ServerPlayer player) {
-        onEntityTick(player);
     }
 
     public static void onEntityTick(Entity entity) {

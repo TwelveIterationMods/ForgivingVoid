@@ -140,6 +140,10 @@ public class ForgivingVoid {
     }
 
     private static boolean isAllowedEntity(Entity entity) {
+        if (entity.level().isClientSide) {
+            return false;
+        }
+
         final var entityAllowList = ForgivingVoidConfig.getActive().entityAllowList;
         final var entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         if (entityAllowList.isEmpty() && entity instanceof Player) {

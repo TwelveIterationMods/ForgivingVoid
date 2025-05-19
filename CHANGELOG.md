@@ -1,1 +1,1 @@
-- Fixed config being accessed too early, resulting in wrong values being used
+- Fixed client-side blindness effect being sometimes applied during world join on Forge/NeoForge

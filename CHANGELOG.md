@@ -1,1 +1,1 @@
-- Fixed client-side blindness effect being sometimes applied during world join on Forge/NeoForge
+- Updated to Minecraft 1.21.6

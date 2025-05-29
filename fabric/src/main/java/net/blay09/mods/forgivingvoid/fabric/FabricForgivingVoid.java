@@ -8,6 +8,6 @@ import net.fabricmc.api.ModInitializer;
 public class FabricForgivingVoid implements ModInitializer {
     @Override
     public void onInitialize() {
-        Balm.initialize(ForgivingVoid.MOD_ID, EmptyLoadContext.INSTANCE, ForgivingVoid::initialize);
+        Balm.initializeMod(ForgivingVoid.MOD_ID, EmptyLoadContext.INSTANCE, ForgivingVoid::initialize);
     }
 }

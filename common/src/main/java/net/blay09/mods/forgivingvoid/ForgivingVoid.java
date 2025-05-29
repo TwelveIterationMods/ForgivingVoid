@@ -37,7 +37,7 @@ public class ForgivingVoid {
     public static void initialize() {
         ForgivingVoidConfig.initialize();
 
-        Balm.getEvents().onTickEvent(TickType.Entity, TickPhase.Start, ForgivingVoid::onEntityTick);
+        Balm.getEvents().onTickEvent(TickType.ServerEntity, TickPhase.Start, ForgivingVoid::onEntityTick);
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
     }
 

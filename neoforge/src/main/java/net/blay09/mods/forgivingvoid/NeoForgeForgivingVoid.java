@@ -13,7 +13,7 @@ public class NeoForgeForgivingVoid {
 
     public NeoForgeForgivingVoid(IEventBus modEventBus) {
         final var context = new NeoForgeLoadContext(modEventBus);
-        Balm.initialize(ForgivingVoid.MOD_ID, context, ForgivingVoid::initialize);
+        Balm.initializeMod(ForgivingVoid.MOD_ID, context, ForgivingVoid::initialize);
     }
 
 }

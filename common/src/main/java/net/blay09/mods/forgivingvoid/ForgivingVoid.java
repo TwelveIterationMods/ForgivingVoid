@@ -140,7 +140,7 @@ public class ForgivingVoid {
     }
 
     private static boolean isAllowedEntity(Entity entity) {
-        if (entity.level().isClientSide) {
+        if (entity.level().isClientSide()) {
             return false;
         }
 

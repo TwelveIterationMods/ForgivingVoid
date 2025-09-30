@@ -1,1 +1,1 @@
-- Fixed dimensionAllowList and dimensionDenyList failing to load
+- Fixed Forgiving Void fall damage being applied even when flying with Elytra

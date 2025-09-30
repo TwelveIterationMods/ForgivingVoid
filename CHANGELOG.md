@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.21.8
+- Fixed Forgiving Void fall damage being applied even when flying with Elytra

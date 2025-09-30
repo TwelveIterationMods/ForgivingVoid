@@ -1,1 +1,1 @@
-- Fixed client-side blindness effect being sometimes applied during world join on Forge/NeoForge
+- Fixed Forgiving Void fall damage being applied even when flying with Elytra

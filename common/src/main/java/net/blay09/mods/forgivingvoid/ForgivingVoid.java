@@ -128,6 +128,10 @@ public class ForgivingVoid {
     }
 
     private static boolean isOrMayFly(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity && livingEntity.isFallFlying()) {
+            return true;
+        }
+
         if (!(entity instanceof Player player)) {
             return false;
         }

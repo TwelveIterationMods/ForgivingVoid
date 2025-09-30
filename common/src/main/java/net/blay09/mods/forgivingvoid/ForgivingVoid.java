@@ -50,7 +50,7 @@ public class ForgivingVoid {
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             final BlockPos playerPos = player.blockPosition();
-            if (player.isInWater() || player.onGround() || player.getAbilities().flying || player.getAbilities().mayfly || player.level().getBlockState(playerPos).getBlock() == Blocks.COBWEB) {
+            if (shouldResetFall(player, playerPos)) {
 
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
                 ((ServerPlayerAccessor) player).setIsChangingDimension(false);
@@ -63,6 +63,15 @@ public class ForgivingVoid {
                 ((ServerPlayerAccessor) player).setIsChangingDimension(true);
             }
         }
+    }
+
+    private static boolean shouldResetFall(ServerPlayer player, BlockPos playerPos) {
+        return player.isInWater()
+                || player.onGround()
+                || player.getAbilities().flying
+                || player.getAbilities().mayfly
+                || player.level().getBlockState(playerPos).getBlock() == Blocks.COBWEB
+                || player.isFallFlying();
     }
 
     public static void onPlayerFall(LivingFallEvent event) {

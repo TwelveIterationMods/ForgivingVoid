@@ -16,9 +16,11 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
+import java.util.Set;
 
 public class ForgivingVoid {
 
@@ -50,8 +52,7 @@ public class ForgivingVoid {
         } else if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             final BlockPos playerPos = player.blockPosition();
-            if (shouldResetFall(player, playerPos)) {
-
+            if (shouldResetFall(player, playerPos) || shouldResetFall(player, playerPos.below())) {
                 persistentData.putBoolean("ForgivingVoidIsFalling", false);
                 ((ServerPlayerAccessor) player).setIsChangingDimension(false);
                 return;
@@ -65,12 +66,14 @@ public class ForgivingVoid {
         }
     }
 
+    public static final Set<Block> FALL_CATCHING_BLOCKS = Set.of(Blocks.COBWEB, Blocks.SLIME_BLOCK);
+
     private static boolean shouldResetFall(ServerPlayer player, BlockPos playerPos) {
         return player.isInWater()
                 || player.onGround()
                 || player.getAbilities().flying
                 || player.getAbilities().mayfly
-                || player.level().getBlockState(playerPos).getBlock() == Blocks.COBWEB
+                || FALL_CATCHING_BLOCKS.contains(player.level().getBlockState(playerPos).getBlock())
                 || player.isFallFlying();
     }
 
@@ -79,12 +82,14 @@ public class ForgivingVoid {
         if (entity instanceof ServerPlayer player) {
             CompoundTag persistentData = Balm.getHooks().getPersistentData(player);
             if (persistentData.getBoolean("ForgivingVoidIsFalling")) {
-                float damage = ForgivingVoidConfig.getActive().damageOnFall;
-                if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
-                    damage = player.getHealth() - 1f;
-                }
+                if (!shouldResetFall(player, player.blockPosition().below())) {
+                    float damage = ForgivingVoidConfig.getActive().damageOnFall;
+                    if (ForgivingVoidConfig.getActive().preventDeath && player.getHealth() - damage <= 0) {
+                        damage = player.getHealth() - 1f;
+                    }
 
-                event.setFallDamageOverride(damage);
+                    event.setFallDamageOverride(damage);
+                }
 
                 ((ServerPlayerAccessor) player).setIsChangingDimension(false);
             }

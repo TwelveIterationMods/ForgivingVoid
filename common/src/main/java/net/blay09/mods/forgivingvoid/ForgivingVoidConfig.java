@@ -1,10 +1,10 @@
 package net.blay09.mods.forgivingvoid;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.config.reflection.Comment;
-import net.blay09.mods.balm.api.config.reflection.Config;
-import net.blay09.mods.balm.api.config.reflection.NestedType;
-import net.minecraft.resources.ResourceLocation;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.platform.config.reflection.Comment;
+import net.blay09.mods.balm.platform.config.reflection.Config;
+import net.blay09.mods.balm.platform.config.reflection.NestedType;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashSet;
 import java.util.List;
@@ -51,22 +51,22 @@ public class ForgivingVoidConfig {
     public List<String> fallThroughVoidEffects = List.of("minecraft:blindness|60|3");
 
     @Comment("List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.")
-    @NestedType(ResourceLocation.class)
-    public Set<ResourceLocation> dimensionAllowList = new HashSet<>();
+    @NestedType(Identifier.class)
+    public Set<Identifier> dimensionAllowList = new HashSet<>();
 
     @Comment("List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set.")
-    @NestedType(ResourceLocation.class)
-    public Set<ResourceLocation> dimensionDenyList = new HashSet<>();
+    @NestedType(Identifier.class)
+    public Set<Identifier> dimensionDenyList = new HashSet<>();
 
     @Comment("List of entity ids to be allowed for Forgiving Void. On Forge this only supports living entities.")
-    @NestedType(ResourceLocation.class)
-    public Set<ResourceLocation> entityAllowList = Set.of(ResourceLocation.withDefaultNamespace("player"));
+    @NestedType(Identifier.class)
+    public Set<Identifier> entityAllowList = Set.of(Identifier.withDefaultNamespace("player"));
 
     public static ForgivingVoidConfig getActive() {
-        return Balm.getConfig().getActiveConfig(ForgivingVoidConfig.class);
+        return Balm.config().getActiveConfig(ForgivingVoidConfig.class);
     }
 
     public static void initialize() {
-        Balm.getConfig().registerConfig(ForgivingVoidConfig.class);
+        Balm.config().registerConfig(ForgivingVoidConfig.class);
     }
 }

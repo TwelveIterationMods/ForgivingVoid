@@ -1,9 +1,9 @@
 package net.blay09.mods.forgivingvoid;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.LivingFallEvent;
-import net.blay09.mods.balm.api.event.TickPhase;
-import net.blay09.mods.balm.api.event.TickType;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.core.BalmRegistrars;
+import net.blay09.mods.balm.platform.event.callback.LivingEntityCallback;
+import net.blay09.mods.balm.platform.event.callback.ServerTickCallback;
 import net.blay09.mods.forgivingvoid.mixin.ServerGamePacketListenerImplAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ServerPlayerAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ThrownTridentAccessor;
@@ -11,13 +11,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -34,11 +34,11 @@ public class ForgivingVoid {
 
     public static final Logger logger = LoggerFactory.getLogger(ForgivingVoid.class);
 
-    public static void initialize() {
+    public static void initialize(BalmRegistrars registrars) {
         ForgivingVoidConfig.initialize();
 
-        Balm.getEvents().onTickEvent(TickType.ServerEntity, TickPhase.Start, ForgivingVoid::onEntityTick);
-        Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);
+        ServerTickCallback.ServerEntityTick.BEFORE.register(ForgivingVoid::onEntityTick);
+        LivingEntityCallback.Fall.EVENT.register(ForgivingVoid::onLivingEntityFall);
     }
 
     public static void onEntityTick(Entity entity) {
@@ -49,7 +49,7 @@ public class ForgivingVoid {
         int triggerAtY = entity.level().getMinY() - ForgivingVoidConfig.getActive().triggerAtDistanceBelow;
         boolean isInVoid = entity.getY() < triggerAtY && entity.yo < triggerAtY;
         boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
-        CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
+        CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
         if (entity.onGround()) {
             persistentData.putLong("LastGroundedPos", entity.blockPosition().asLong());
         }
@@ -77,7 +77,7 @@ public class ForgivingVoid {
                     if (teleportedEntity instanceof ServerPlayerAccessor player) {
                         player.setIsChangingDimension(true);
                     }
-                    final var teleportedEntityData = Balm.getHooks().getPersistentData(teleportedEntity);
+                    final var teleportedEntityData = Balm.hooks().getPersistentData(teleportedEntity);
                     final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
                     final var lastGroundedPos = teleportedEntityData.getLong("LastGroundedPos").map(BlockPos::of).orElseGet(teleportedEntity::blockPosition);
                     final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : teleportedEntity.getX();
@@ -112,7 +112,7 @@ public class ForgivingVoid {
     private static void applyFallThroughVoidEffects(LivingEntity entity) {
         for (String effectString : ForgivingVoidConfig.getActive().fallThroughVoidEffects) {
             String[] parts = effectString.split("\\|");
-            ResourceLocation registryName = ResourceLocation.tryParse(parts[0]);
+            Identifier registryName = Identifier.tryParse(parts[0]);
             if (registryName != null) {
                 final var holder = BuiltInRegistries.MOB_EFFECT.get(registryName);
                 if (holder.isPresent()) {
@@ -184,20 +184,22 @@ public class ForgivingVoid {
         return player.getAbilities().flying || player.getAbilities().mayfly;
     }
 
-    public static void onLivingEntityFall(LivingFallEvent event) {
-        LivingEntity entity = event.getEntity();
+    public static float onLivingEntityFall(LivingEntity entity, float fallDamage) {
         if (isAllowedEntity(entity)) {
-            CompoundTag persistentData = Balm.getHooks().getPersistentData(entity);
+            CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
             if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
                 final var config = ForgivingVoidConfig.getActive();
                 final var damage = calculateFallDamage(config, entity);
-                event.setFallDamageOverride(damage);
 
                 if (entity instanceof ServerPlayerAccessor player) {
                     player.setIsChangingDimension(false);
                 }
+
+                return damage;
             }
         }
+
+        return fallDamage;
     }
 
     private static float calculateFallDamage(ForgivingVoidConfig config, LivingEntity entity) {
@@ -219,7 +221,7 @@ public class ForgivingVoid {
 
     private static boolean fireForgivingVoidEvent(Entity entity) {
         ForgivingVoidFallThroughEvent event = new ForgivingVoidFallThroughEvent(entity);
-        Balm.getEvents().fireEvent(event);
+        ForgivingVoidFallThroughEvent.EVENT.invoker().accept(event);
         return !event.isCanceled();
     }
 
@@ -231,7 +233,7 @@ public class ForgivingVoid {
         } else if (dimensionKey == Level.NETHER) {
             return ForgivingVoidConfig.getActive().triggerInNether;
         } else {
-            final ResourceLocation dimension = dimensionKey.location();
+            final Identifier dimension = dimensionKey.identifier();
             final var dimensionAllowList = ForgivingVoidConfig.getActive().dimensionAllowList;
             final var dimensionDenyList = ForgivingVoidConfig.getActive().dimensionDenyList;
             if (!dimensionAllowList.isEmpty() && !dimensionAllowList.contains(dimension)) {

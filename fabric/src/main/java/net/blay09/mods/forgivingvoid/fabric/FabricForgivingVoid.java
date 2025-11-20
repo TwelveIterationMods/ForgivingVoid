@@ -1,13 +1,13 @@
 package net.blay09.mods.forgivingvoid.fabric;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.EmptyLoadContext;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.fabric.platform.runtime.FabricLoadContext;
 import net.blay09.mods.forgivingvoid.ForgivingVoid;
 import net.fabricmc.api.ModInitializer;
 
 public class FabricForgivingVoid implements ModInitializer {
     @Override
     public void onInitialize() {
-        Balm.initializeMod(ForgivingVoid.MOD_ID, EmptyLoadContext.INSTANCE, ForgivingVoid::initialize);
+        Balm.initializeMod(ForgivingVoid.MOD_ID, FabricLoadContext.INSTANCE, ForgivingVoid::initialize);
     }
 }

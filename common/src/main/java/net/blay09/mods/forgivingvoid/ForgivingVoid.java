@@ -38,7 +38,7 @@ public class ForgivingVoid {
         ForgivingVoidConfig.initialize();
 
         ServerTickCallback.ServerEntityTick.BEFORE.register(ForgivingVoid::onEntityTick);
-        LivingEntityCallback.Fall.EVENT.register(ForgivingVoid::onLivingEntityFall);
+        LivingEntityCallback.Fall.Before.EVENT.register(ForgivingVoid::onLivingEntityFall);
     }
 
     public static void onEntityTick(Entity entity) {

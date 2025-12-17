@@ -4,6 +4,7 @@ import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.LivingFallEvent;
 import net.blay09.mods.balm.api.event.TickPhase;
 import net.blay09.mods.balm.api.event.TickType;
+import net.blay09.mods.balm.common.config.ConfigLocalization;
 import net.blay09.mods.forgivingvoid.mixin.ServerGamePacketListenerImplAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ServerPlayerAccessor;
 import net.blay09.mods.forgivingvoid.mixin.ThrownTridentAccessor;
@@ -30,6 +31,7 @@ public class ForgivingVoid {
     public static final String MOD_ID = "forgivingvoid";
 
     public static void initialize() {
+        ConfigLocalization.enableModernTranslationKeys(MOD_ID);
         ForgivingVoidConfig.initialize();
 
         Balm.getEvents().onEvent(LivingFallEvent.class, ForgivingVoid::onLivingEntityFall);

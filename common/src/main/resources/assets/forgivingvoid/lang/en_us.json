@@ -5,6 +5,8 @@
   "forgivingvoid.configuration.triggerAtDistanceBelow.tooltip": "The distance to the minimum y level at which Forgiving Void should forgive the player and send them towards the sky.",
   "forgivingvoid.configuration.damageOnFall": "Damage on Fall",
   "forgivingvoid.configuration.damageOnFall.tooltip": "The amount of damage applied to the player when they land.",
+  "forgivingvoid.configuration.damageOnFallMode": "Damage on Fall Mode",
+  "forgivingvoid.configuration.damageOnFallMode.tooltip": "Set to ABSOLUTE for absolute fall damage in half hearts, RELATIVE_CURRENT for a percentage of their current health, or RELATIVE_MAX for a percentage of their max health.",
   "forgivingvoid.configuration.fallingHeight": "Falling Height",
   "forgivingvoid.configuration.fallingHeight.tooltip": "The height from which the player will be falling after falling through the void.",
   "forgivingvoid.configuration.preventDeath": "Prevent Death",
@@ -20,5 +22,13 @@
   "forgivingvoid.configuration.dimensionAllowList": "Dimension Allow List",
   "forgivingvoid.configuration.dimensionAllowList.tooltip": "List of dimension ids to be allowed for Forgiving Void. Options triggerInOverworld etc. take priority.",
   "forgivingvoid.configuration.dimensionDenyList": "Dimension Deny List",
-  "forgivingvoid.configuration.dimensionDenyList.tooltip": "List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set."
+  "forgivingvoid.configuration.dimensionDenyList.tooltip": "List of additional dimension ids to be deny-listed from Forgiving Void. Options triggerInOverworld etc. take priority. Ignored if dimensionAllowList is set.",
+  "forgivingvoid.configuration.returnToLastGrounded": "Return to Last Grounded",
+  "forgivingvoid.configuration.returnToLastGrounded.tooltip": "Set to true to make Forgiving Void return the player to the sky above their last grounded position instead of their current position. Prevents players from using Forgiving Void to fly across larger distances.",
+  "forgivingvoid.configuration.tridentForgiveness":"Trident Forgiveness",
+  "forgivingvoid.configuration.tridentForgiveness.tooltip":"Set to true to have tridents with loyalty be affected by Forgiving Void. Not supported on Forge.",
+  "forgivingvoid.configuration.entityAllowList": "Entity Allow List",
+  "forgivingvoid.configuration.entityAllowList.tooltip": "List of entity ids to be allowed for Forgiving Void. On Forge this only supports living entities.",
+  "forgivingvoid.configuration.fallThroughVoidEffects": "Fall Through Void Effects",
+  "forgivingvoid.configuration.fallThroughVoidEffects.tooltip": "Effects applied to a player when they fall through the void, in the format \"effect|duration|amplifier\""
 }

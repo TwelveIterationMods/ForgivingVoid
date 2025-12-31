@@ -185,7 +185,7 @@ public class ForgivingVoid {
     }
 
     public static float onLivingEntityFall(LivingEntity entity, float fallDamage) {
-        if (isAllowedEntity(entity)) {
+        if (isAllowedEntity(entity) && fallDamage > 0) {
             CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
             if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
                 final var config = ForgivingVoidConfig.getActive();

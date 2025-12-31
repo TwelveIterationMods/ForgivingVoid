@@ -184,25 +184,25 @@ public class ForgivingVoid {
         return player.getAbilities().flying || player.getAbilities().mayfly;
     }
 
-    public static float onLivingEntityFall(LivingEntity entity, float fallDamage) {
-        if (isAllowedEntity(entity)) {
+    public static float onLivingEntityFall(LivingEntity entity, float originalDamage) {
+        if (isAllowedEntity(entity) && originalDamage > 0) {
             CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
             if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
                 final var config = ForgivingVoidConfig.getActive();
-                final var damage = calculateFallDamage(config, entity);
+                final var newDamage = calculateFallDamage(config, entity, originalDamage);
 
                 if (entity instanceof ServerPlayerAccessor player) {
                     player.setIsChangingDimension(false);
                 }
 
-                return damage;
+                return newDamage;
             }
         }
 
-        return fallDamage;
+        return originalDamage;
     }
 
-    private static float calculateFallDamage(ForgivingVoidConfig config, LivingEntity entity) {
+    private static float calculateFallDamage(ForgivingVoidConfig config, LivingEntity entity, float originalDamage) {
         float damage = config.damageOnFall;
         // We normalize percentages if the user accidentally set a value out of 100.
         if (config.damageOnFallMode != DamageOnFallMode.ABSOLUTE && damage > 1) {
@@ -216,7 +216,7 @@ public class ForgivingVoid {
         if (config.preventDeath && entity.getHealth() - damage <= 0) {
             damage = entity.getHealth() - 1f;
         }
-        return damage;
+        return Math.min(damage, originalDamage);
     }
 
     private static boolean fireForgivingVoidEvent(Entity entity) {

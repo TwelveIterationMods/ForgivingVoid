@@ -6,7 +6,7 @@ Minecraft Mod. Makes the void hate you a little less (and vice-versa). Fall down
 
 #### Downloads
 
-[![Versions](http://cf.way2muchnoise.eu/versions/271009_latest.svg)](https://minecraft.curseforge.com/projects/forgiving-void) [![Downloads](http://cf.way2muchnoise.eu/full_271009_downloads.svg)](https://minecraft.curseforge.com/projects/forgiving-void)
+[![Versions](http://cf.way2muchnoise.eu/versions/271009_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/forgiving-void) [![Downloads](http://cf.way2muchnoise.eu/full_271009_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/forgiving-void)
 
 ## Contributing
 

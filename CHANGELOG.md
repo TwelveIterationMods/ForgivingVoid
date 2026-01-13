@@ -1,1 +1,1 @@
-- Fixed Forgiving Void fall damage being applied even when flying with Elytra
+- Fixed translation in config screens

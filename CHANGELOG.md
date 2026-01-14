@@ -1,1 +1,2 @@
-- Updated to Minecraft 1.21.11
+- Respect original fall damage when applying Forgiving Void damage
+- Fixed translations in config screen

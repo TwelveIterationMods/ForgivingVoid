@@ -1,1 +1,1 @@
-- Fixed translation in config screens
+- Fixed translation of config screens

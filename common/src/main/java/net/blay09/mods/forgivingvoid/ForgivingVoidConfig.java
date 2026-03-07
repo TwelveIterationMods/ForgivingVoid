@@ -22,9 +22,6 @@ public class ForgivingVoidConfig {
     @Comment("The amount of damage applied to the player when they land.")
     public float damageOnFall = 19;
 
-    @Comment("The height from which the player will be falling after falling through the void.")
-    public int fallingHeight = 300;
-
     @Comment("Set to true to make Forgiving Void return the player to the sky above their last grounded position instead of their current position. Prevents players from using Forgiving Void to fly across larger distances.")
     public boolean returnToLastGrounded = true;
 

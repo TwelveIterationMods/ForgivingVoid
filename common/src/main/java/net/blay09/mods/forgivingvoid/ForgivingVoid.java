@@ -81,7 +81,7 @@ public class ForgivingVoid {
                     final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
                     final var lastGroundedPos = teleportedEntityData.getLong("LastGroundedPos").map(BlockPos::of).orElseGet(teleportedEntity::blockPosition);
                     final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : teleportedEntity.getX();
-                    final var y = ForgivingVoidConfig.getActive().fallingHeight;
+                    final var y = ForgivingVoidRules.fallingHeight.getOrDefault(teleportedEntity);
                     final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : teleportedEntity.getZ();
                     teleportedEntity.teleportTo(x, y, z);
                     teleportedEntityData.putBoolean("ForgivingVoidIsFalling", true);
@@ -244,4 +244,7 @@ public class ForgivingVoid {
         }
     }
 
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    }
 }

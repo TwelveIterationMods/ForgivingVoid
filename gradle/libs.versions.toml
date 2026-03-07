@@ -1,11 +1,12 @@
 [versions]
-balm = "26.1.1.0-SNAPSHOT"
+balm = "26.1.0.1-SNAPSHOT"
 minecraft = "26.1-snapshot-11"
 neoForm = "26.1-snapshot-11-1"
 neoForge = "26.1.0.0-alpha.13+snapshot-10"
 forge = "61.0.3"
 fabricApi = "0.143.11+26.1"
 fabricLoader = "0.18.4"
+shogi = "26.1.0.1-SNAPSHOT"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -15,6 +16,8 @@ balmCommon = { module = "net.blay09.mods:balm-common", version.ref = "balm" }
 balmNeoForge = { module = "net.blay09.mods:balm-neoforge", version.ref = "balm" }
 balmForge = { module = "net.blay09.mods:balm-forge", version.ref = "balm" }
 balmFabric = { module = "net.blay09.mods:balm-fabric", version.ref = "balm" }
+
+shogiApi = { module = "net.blay09.mods:shogi-api", version.ref = "shogi" }
 
 neoForm = { module = "net.neoforged:neoform", version.ref = "neoForm" }
 neoForge = { module = "net.neoforged:neoforge", version.ref = "neoForge" }

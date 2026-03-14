@@ -22,6 +22,9 @@
     "main": [
       "net.blay09.mods.forgivingvoid.fabric.FabricForgivingVoid"
     ],
+    "fabric-datagen": [
+      "net.blay09.mods.forgivingvoid.fabric.datagen.ModDataGenerator"
+    ],
     "client": [
     ]
   },

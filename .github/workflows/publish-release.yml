@@ -34,7 +34,7 @@ on:
         default: true
 
 jobs:
-  check-datagen:
+  verify-resources:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -57,10 +57,12 @@ jobs:
             git diff
             exit 1
           fi
+      - name: Validate en_us.json file
+        uses: TwelveIterations/validate-minecraft-lang@v1
   create-release:
     runs-on: ubuntu-latest
     environment: Releases
-    needs: check-datagen
+    needs: verify-resources
     outputs:
       ref: v${{ steps.bump-version.outputs.version }}
       version: ${{ steps.bump-version.outputs.version }}

@@ -1,2 +1,2 @@
-- Respect original fall damage when applying Forgiving Void damage
-- Fixed translations in config screen
+- Updated to Minecraft 26.1
+- Replace fallingHeight option with a more extensible `forgivingvoid:falling_height` Shogi rule

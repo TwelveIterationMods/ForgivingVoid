@@ -1,6 +1,5 @@
 {
   "forgivingvoid.configuration.title": "너그러운 빈 공간",
-  "forgivingvoid.configuration.triggerAtY": "Y에서 트리거",
   "forgivingvoid.configuration.damageOnFall": "추락 피해",
   "forgivingvoid.configuration.fallingHeight": "낙하 높이",
   "forgivingvoid.configuration.preventDeath": "사망 방지",

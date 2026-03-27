@@ -10,8 +10,6 @@ import java.io.File;
 public class ModDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-
         I18nExport.writeStaticI18nKeys(ForgivingVoid.MOD_ID, new File("i18n.export.json"));
     }
 }

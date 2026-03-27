@@ -8,6 +8,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Config(ForgivingVoid.MOD_ID)
@@ -60,7 +61,7 @@ public class ForgivingVoidConfig {
     public Set<Identifier> entityAllowList = Set.of(Identifier.withDefaultNamespace("player"));
 
     public static ForgivingVoidConfig getActive() {
-        return Balm.config().getActiveConfig(ForgivingVoidConfig.class);
+        return Objects.requireNonNull(Balm.config().getActiveConfig(ForgivingVoidConfig.class));
     }
 
     public static void initialize() {

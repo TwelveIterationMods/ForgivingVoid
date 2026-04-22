@@ -1,1 +1,3 @@
-- Fixed translation of config screens
+- Added `fallThroughEffects` option to allow changing the effects applied when falling through the void
+- Added `returnToLastGrounded` option (default: `true`) that helps prevent Forgiving Void to be abused for crossing larger distances
+- Fixed config translation keys

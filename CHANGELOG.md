@@ -1,2 +1,1 @@
-- Updated to Minecraft 26.1
-- Replace fallingHeight option with a more extensible `forgivingvoid:falling_height` Shogi rule
+- Fixed embedded Shogi API falsely overriding newer versions of the Shogi API, resulting in startup crashes with other mods using newer versions of Shogi

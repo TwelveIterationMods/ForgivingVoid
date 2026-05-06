@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class ForgivingVoid {
+    public static final String TAG_LAST_GROUNDED_POS = "LastGroundedPos";
+    public static final String TAG_LOOPS = "Loops";
+    public static final String TAG_IS_FALLING = "ForgivingVoidIsFalling";
 
     public static final String MOD_ID = "forgivingvoid";
 
@@ -51,7 +54,8 @@ public class ForgivingVoid {
         boolean isTeleporting = entity instanceof ServerPlayer player && ((ServerGamePacketListenerImplAccessor) player.connection).getAwaitingPositionFromClient() != null;
         CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
         if (entity.onGround()) {
-            persistentData.putLong("LastGroundedPos", entity.blockPosition().asLong());
+            persistentData.putLong(TAG_LAST_GROUNDED_POS, entity.blockPosition().asLong());
+            persistentData.putInt(TAG_LOOPS, 0);
         }
 
         if (isInVoid && !isTeleporting && isEnabledForDimension(entity.level().dimension()) && fireForgivingVoidEvent(entity)) {
@@ -78,23 +82,26 @@ public class ForgivingVoid {
                         player.setIsChangingDimension(true);
                     }
                     final var teleportedEntityData = Balm.hooks().getPersistentData(teleportedEntity);
+                    final var loops = teleportedEntityData.getIntOr(TAG_LOOPS, 0) + 1;
+                    teleportedEntityData.putInt(TAG_LOOPS, loops);
                     final var returnToGrounded = ForgivingVoidConfig.getActive().returnToLastGrounded;
-                    final var lastGroundedPos = teleportedEntityData.getLong("LastGroundedPos").map(BlockPos::of).orElseGet(teleportedEntity::blockPosition);
+                    final var lastGroundedPos = teleportedEntityData.getLong(TAG_LAST_GROUNDED_POS).map(BlockPos::of).orElseGet(teleportedEntity::blockPosition);
                     final var x = returnToGrounded ? lastGroundedPos.getX() + 0.5f : teleportedEntity.getX();
-                    final var y = ForgivingVoidRules.fallingHeight.getOrDefault(teleportedEntity);
+                    final var y = ForgivingVoidRules.fallingHeight.getOrDefault(ForgivingVoidRules.makeContext(teleportedEntity, loops));
                     final var z = returnToGrounded ? lastGroundedPos.getZ() + 0.5f : teleportedEntity.getZ();
                     teleportedEntity.teleportTo(x, y, z);
-                    teleportedEntityData.putBoolean("ForgivingVoidIsFalling", true);
+                    teleportedEntityData.putBoolean(TAG_IS_FALLING, true);
                 }
             });
 
             if (vehicle != null) {
                 entity.startRiding(vehicle);
             }
-        } else if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
+        } else if (persistentData.getBooleanOr(TAG_IS_FALLING, false)) {
             // LivingFallEvent is not called when the player falls into water or is flying, so reset it manually - and give no damage at all.
             if (hasLanded(entity) || isOrMayFly(entity)) {
-                persistentData.putBoolean("ForgivingVoidIsFalling", false);
+                persistentData.putInt(TAG_LOOPS, 0);
+                persistentData.putBoolean(TAG_IS_FALLING, false);
                 if (entity instanceof ServerPlayerAccessor player) {
                     player.setIsChangingDimension(false);
                 }
@@ -187,7 +194,7 @@ public class ForgivingVoid {
     public static float onLivingEntityFall(LivingEntity entity, float originalDamage) {
         if (isAllowedEntity(entity) && originalDamage > 0) {
             CompoundTag persistentData = Balm.hooks().getPersistentData(entity);
-            if (persistentData.getBooleanOr("ForgivingVoidIsFalling", false)) {
+            if (persistentData.getBooleanOr(TAG_IS_FALLING, false)) {
                 final var config = ForgivingVoidConfig.getActive();
                 final var newDamage = calculateFallDamage(config, entity, originalDamage);
 
@@ -242,6 +249,10 @@ public class ForgivingVoid {
                 return !dimensionDenyList.contains(dimension);
             }
         }
+    }
+
+    public static int getLoops(Entity entity) {
+        return Balm.hooks().getPersistentData(entity).getIntOr(TAG_LOOPS, 0);
     }
 
     public static Identifier id(String path) {

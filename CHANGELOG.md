@@ -1,1 +1,1 @@
-- Fixed embedded Shogi API falsely overriding newer versions of the Shogi API, resulting in startup crashes with other mods using newer versions of Shogi
+- Updated to Minecraft 26.2
